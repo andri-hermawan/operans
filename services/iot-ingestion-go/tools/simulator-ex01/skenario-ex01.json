@@ -1,0 +1,22 @@
+[
+  {"latitude":-3.4700518409,"longitude":103.8713217515,"fuel_level":1970,"speed":0,"engine_status":false,"gsm_signal":1,"gsm_operator":51010},
+  {"latitude":-3.4711800623,"longitude":103.870971128199,"fuel_level":1967.242,"speed":30,"engine_status":true,"gsm_signal":1,"gsm_operator":51010},
+  {"latitude":-3.4710997317,"longitude":103.868845622199,"fuel_level":1964.484,"speed":30,"engine_status":true,"gsm_signal":1,"gsm_operator":51010},
+  {"latitude":-3.4703033683,"longitude":103.866341102899,"fuel_level":1961.726,"speed":30,"engine_status":true,"gsm_signal":1,"gsm_operator":51010},
+  {"latitude":-3.4692884495,"longitude":103.863659291399,"fuel_level":1958.968,"speed":30,"engine_status":true,"gsm_signal":1,"gsm_operator":51010},
+  {"latitude":-3.4707250142,"longitude":103.862564683,"fuel_level":1956.21,"speed":30,"engine_status":true,"gsm_signal":1,"gsm_operator":51010},
+  {"latitude":-3.4726071804,"longitude":103.8627502732,"fuel_level":1954.831,"speed":0,"engine_status":true,"gsm_signal":1,"gsm_operator":51010},
+  {"latitude":-3.4731864498,"longitude":103.862693946899,"fuel_level":1953.452,"speed":30,"engine_status":true,"gsm_signal":1,"gsm_operator":51010},
+  {"latitude":-3.4740161595,"longitude":103.862828133199,"fuel_level":1952.467,"speed":0,"engine_status":true,"gsm_signal":1,"gsm_operator":51010},
+  {"latitude":-3.4740365263,"longitude":103.862848352699,"fuel_level":2937.467,"speed":0,"engine_status":true,"gsm_signal":1,"gsm_operator":51010},
+  {"latitude":-3.4740365032,"longitude":103.862829299699,"fuel_level":3922.467,"speed":0,"engine_status":true,"gsm_signal":1,"gsm_operator":51010},
+  {"latitude":-3.4740352893,"longitude":103.8628150114,"fuel_level":3922.467,"speed":0,"engine_status":true,"gsm_signal":1,"gsm_operator":51010},
+  {"latitude":-3.4740532557,"longitude":103.8628292796,"fuel_level":3922.073,"speed":0,"engine_status":true,"gsm_signal":1,"gsm_operator":51010},
+  {"latitude":-3.4754956635,"longitude":103.863019831499,"fuel_level":3919.315,"speed":30,"engine_status":true,"gsm_signal":1,"gsm_operator":51010},
+  {"latitude":-3.4779302132,"longitude":103.8640255551,"fuel_level":3916.557,"speed":30,"engine_status":true,"gsm_signal":1,"gsm_operator":51010},
+  {"latitude":-3.4800254145,"longitude":103.864967368099,"fuel_level":3913.799,"speed":30,"engine_status":true,"gsm_signal":1,"gsm_operator":51010},
+  {"latitude":-3.4817732767,"longitude":103.866164420399,"fuel_level":3911.041,"speed":30,"engine_status":true,"gsm_signal":1,"gsm_operator":51010},
+  {"latitude":-3.4836770818,"longitude":103.867624494599,"fuel_level":3908.283,"speed":30,"engine_status":true,"gsm_signal":1,"gsm_operator":51010},
+  {"latitude":-3.4857453785,"longitude":103.8683439999,"fuel_level":3905.525,"speed":30,"engine_status":true,"gsm_signal":1,"gsm_operator":51010},
+  {"latitude":-3.4873246468,"longitude":103.8688686049,"fuel_level":3902.767,"speed":0,"engine_status":false,"gsm_signal":1,"gsm_operator":51010}
+]

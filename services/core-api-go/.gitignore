@@ -1,0 +1,7 @@
+.env
+.env.migrate
+.env.test
+keys/
+bin/
+*.exe
+laporan-impor/

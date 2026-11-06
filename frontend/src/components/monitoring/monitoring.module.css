@@ -1,0 +1,487 @@
+.info {
+  font-size: 12px;
+  min-width: 210px;
+}
+
+.infoTitle {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--simha-primary-dark);
+  margin-bottom: 6px;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  line-height: 1.7;
+}
+
+.infoRow > span:first-child {
+  color: var(--simha-muted);
+}
+
+.listHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--simha-primary);
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: auto;
+  flex: 1; /* memanjang sampai dasar panel (sejajar peta); bila isinya banyak, bergulir di dalamnya */
+  min-height: 0;
+}
+
+.listItem {
+  border: 1px solid var(--simha-border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: var(--simha-surface);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.listItem:hover {
+  border-color: var(--simha-primary);
+}
+
+.listItemActive {
+  border-color: var(--simha-accent);
+  box-shadow: 0 0 0 2px rgb(240 165 0 / 0.35);
+}
+
+.listItemTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.muted {
+  color: var(--simha-muted);
+}
+
+.panelFilters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+}
+
+.twoCols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  min-height: 0;
+}
+
+.statGrid {
+  display: grid;
+  grid-template-columns: auto repeat(3, 1fr);
+  gap: 2px 10px;
+  font-size: 12px;
+}
+
+.statGrid > span:nth-child(4n + 1) {
+  color: var(--simha-muted);
+}
+
+.playback {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 500;
+  width: min(460px, calc(100% - 24px));
+  background: rgb(255 255 255 / 0.96);
+  border-radius: 10px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.25);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@media (max-width: 767px) {
+  .twoCols {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Panel Live Tracking: Asset List (kiri) + Asset Status 40% / Abnormal Alert Summary 60% (kanan),
+   semuanya memanjang ke bawah sampai sejajar dengan peta. */
+.fillGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 1fr);
+  gap: 12px;
+  flex: 1;
+  min-height: 320px;
+}
+
+.fillSplit {
+  display: grid;
+  grid-template-rows: 40fr 60fr;
+  gap: 12px;
+  min-height: 0;
+}
+
+.fillCard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.fillCard :global(.ant-card-body) {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+@media (max-width: 767px) {
+  .fillGrid {
+    grid-template-columns: 1fr;
+    flex: none;
+  }
+
+  .fillSplit {
+    grid-template-rows: auto auto;
+  }
+
+  .fillCard {
+    height: auto;
+    max-height: 420px;
+  }
+}
+
+/* Daftar unit (AssetList) */
+.assetItem {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.assetRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.assetRow:hover {
+  background: #fafafa;
+}
+
+.assetRowActive,
+.assetRowActive:hover {
+  background: #fff7e6;
+}
+
+.assetName {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 13px;
+  font-style: italic;
+}
+
+.assetIcon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.assetInfo {
+  color: #bbb;
+  font-size: 16px;
+}
+
+.assetAction {
+  color: var(--simha-primary);
+  font-size: 16px;
+}
+
+.assetDetail {
+  padding: 10px 16px 14px;
+  background: #fafafa;
+  border-top: 1px solid #f0f0f0;
+}
+
+.assetDetailHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.assetLoading {
+  margin-left: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #8c8c8c;
+}
+
+.assetTime {
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--simha-primary);
+  border-radius: 4px;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+.actRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.actLabel {
+  color: #444;
+  font-weight: 600;
+}
+
+.actValue {
+  color: #333;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.actSub {
+  padding-left: 14px;
+}
+
+.actSub .actLabel,
+.actSub .actValue {
+  color: #666;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+/* Ringkasan status unit (AssetStatus) */
+.statusTotal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #f5f5f5;
+  font-size: 13px;
+}
+
+.statusDetail {
+  padding: 8px 12px 12px;
+  background: #fafafa;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.statusUpdate {
+  display: inline-block;
+  margin-bottom: 6px;
+  padding: 2px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Kartu berisi daftar bergulir + footer tetap (Geofencing) */
+.fillCol :global(.ant-card-body) {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.scrollBox {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border-top: 1px solid #f0f0f0;
+  background: #fafafa;
+  font-size: 12px;
+}
+
+.passRow {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 12px;
+}
+
+.passTop,
+.passBottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.passTop {
+  font-weight: 600;
+}
+
+.passTop span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.passBottom {
+  margin-top: 4px;
+  color: #666;
+}
+
+/* Panel Geofencing: 60% Asset Passing + Hourly Passing Summary, 40% Hourly Traffic Chart */
+.geoBody {
+  display: grid;
+  grid-template-rows: 60fr 40fr;
+  gap: 12px;
+  flex: 1;
+  min-height: 420px;
+}
+
+.geoTop {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  min-height: 0;
+}
+
+@media (max-width: 767px) {
+  .geoBody {
+    grid-template-rows: auto auto;
+    flex: none;
+    min-height: 0;
+  }
+
+  .geoTop {
+    grid-template-columns: 1fr;
+  }
+
+  .geoBody .fillCard {
+    height: 360px;
+  }
+}
+
+/* Kartu alert (Abnormal Distribution Map) */
+.alertCard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--simha-border);
+  border-radius: 10px;
+  background: var(--simha-surface);
+  cursor: pointer;
+}
+
+.alertCard:hover {
+  border-color: var(--simha-primary);
+}
+
+.alertBadge {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+}
+
+.alertBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.alertTitle {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.alertCode {
+  font-weight: 700;
+  color: var(--simha-primary-dark);
+}
+
+.alertMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--simha-muted);
+}
+
+.alertMeta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* Wadah daftar berlatar putih + bingkai, supaya batas bawah daftar terlihat */
+.listBox {
+  padding: 8px;
+  background: #fff;
+  border: 1px solid var(--simha-border);
+  border-radius: 8px;
+}
+
+/* Kartu Speed Heatmap */
+.speedBadge {
+  width: 46px;
+  height: 46px;
+  border: 2px solid;
+  line-height: 1;
+  align-content: center;
+  text-align: center;
+}
+
+.speedBadge b {
+  display: block;
+  font-size: 16px;
+}
+
+.speedBadge small {
+  display: block;
+  font-size: 9px;
+  opacity: 0.8;
+}
+
+.speedBar {
+  height: 4px;
+  margin-top: 6px;
+  border-radius: 2px;
+  background: #eef0f3;
+  overflow: hidden;
+}
+
+.speedBar span {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+}

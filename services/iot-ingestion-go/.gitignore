@@ -1,0 +1,6 @@
+.env
+.env.migrate
+keys/
+body.json
+bin/
+*.exe

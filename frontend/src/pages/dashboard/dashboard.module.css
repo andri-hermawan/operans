@@ -1,0 +1,178 @@
+/* Dashboard — bab 1…7 dari atas ke bawah; urutan kartu dan grafiknya yang bercerita */
+.page {
+  width: 100%;
+}
+
+.chapter {
+  margin-bottom: 16px;
+  padding: 18px 20px;
+  background: var(--simha-surface);
+  border: 1px solid var(--simha-border);
+  border-radius: 12px;
+}
+
+.chapterHead {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.chapterNo {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.chapterTitle {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+/* Deret kartu angka kunci di bawah judul bab */
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--simha-border);
+  border-radius: 12px;
+  background: #fafbfc;
+}
+
+.statIcon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+}
+
+.statValue {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.statUnit {
+  margin-left: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--simha-muted);
+}
+
+.statLabel {
+  font-size: 12px;
+  color: var(--simha-muted);
+}
+
+.subTitle {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+
+/* Kondisi armada: batang bertingkat + legenda */
+.statusBar {
+  display: flex;
+  height: 22px;
+  overflow: hidden;
+  border-radius: 11px;
+  background: #eef0f3;
+}
+
+.statusBar span {
+  display: block;
+  min-width: 2px;
+}
+
+.statusLegend {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.statusItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statusDot {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+
+.statusCount {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.statusName {
+  font-size: 11px;
+  color: var(--simha-muted);
+}
+
+/* Daftar kartu kecil (breakdown, alert terbaru) */
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.feedItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--simha-border);
+  border-radius: 10px;
+}
+
+.feedBadge {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+}
+
+.feedBody {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+}
+
+.feedTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.feedMeta {
+  color: var(--simha-muted);
+  font-size: 11px;
+}

@@ -1,0 +1,7 @@
+// Go workspace: VS Code / gopls mengenali kedua service sekaligus walau tiap service punya go.mod sendiri.
+go 1.27.3
+
+use (
+	./services/core-api-go
+	./services/iot-ingestion-go
+)

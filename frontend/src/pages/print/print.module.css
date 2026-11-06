@@ -1,0 +1,41 @@
+.page {
+  padding: 16px 20px;
+  background: #fff;
+  min-height: 100vh;
+}
+
+/* PDF dari core-api: isi dikunci selebar 1240 px (= halaman 1280 px − margin 2×20 px) agar susunannya sama dengan layar */
+.pdfWidth {
+  width: 1240px;
+  min-height: 0;
+  padding: 0;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 3px solid var(--simha-primary);
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--simha-primary-dark);
+}
+
+.sub {
+  font-size: 12px;
+  color: var(--simha-muted);
+}
+
+@media print {
+  .noPrint {
+    display: none !important;
+  }
+  .page {
+    padding: 0;
+  }
+}

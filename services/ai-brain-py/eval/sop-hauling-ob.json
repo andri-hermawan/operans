@@ -1,0 +1,87 @@
+{
+  "dokumen": {
+    "judul": "Hauling OB",
+    "project": "CHR",
+    "project_id": "9811d93d-0813-489a-805d-eea4b68b3242",
+    "nomor": "RIMS.RMKO-PRD-POS-005-R00-Hauling OB",
+    "jumlah_halaman": 13
+  },
+  "status": "DRAF - menunggu tinjauan orang yang paham operasional (lihat docs/ai-evaluasi-sop.md)",
+  "keterangan": {
+    "kategori": {
+      "fakta": "jawaban tertulis jelas di satu tempat",
+      "parafrase": "pertanyaan dengan kata-kata berbeda dari dokumen (menguji pencarian makna, bukan hanya kata kunci)",
+      "multi-halaman": "jawaban perlu menggabungkan beberapa bagian/halaman",
+      "sebagian": "topiknya disinggung tetapi nilai/rincian yang ditanyakan tidak ada",
+      "tidak-ada": "tidak ada di dokumen sama sekali; AI WAJIB menjawab tidak ditemukan, bukan mengarang",
+      "dalam-gambar": "jawabannya hanya ada di halaman bergambar (formulir/lampiran hasil scan); baru bisa dijawab setelah halaman itu dibaca dengan OCR",
+      "ambigu": "dokumen sendiri tidak konsisten; jawaban baik menyebut kedua versi"
+    },
+    "kata_kunci": "kata/frasa yang harus ada pada jawaban yang benar (dipakai skor otomatis awal; tidak peka huruf besar/kecil)",
+    "tidak_ada": "true = AI harus menyatakan informasi tidak ditemukan di dokumen",
+    "butuh_ocr": "true = jawabannya hanya ada di gambar; dicek terhadap hasil OCR (verify_dataset --ocr), dan baru bisa dijawab AI setelah dokumen diproses ulang dengan OCR aktif",
+    "pemicu_absen": "kata yang TIDAK boleh ada di teks dokumen (dicek otomatis agar soal 'tidak ada' memang benar tidak ada)"
+  },
+  "catatan_sumber": [
+    "Halaman 8 (Diagram Alir) di PDF ini kosong: hanya judul, tidak ada diagram.",
+    "Halaman 10 (Form P2H) dan 11 (Time Sheet) adalah gambar hasil scan. Halaman 10 terbaca baik oleh OCR (butir periksa P2H); halaman 11 padat dan hasil OCR-nya berantakan, jadi tidak dipakai untuk soal.",
+    "Dokumen menyebut HD sebagai 'Heavy Dump' (hal. 4) dan 'Haul Duty' (hal. 6): tidak konsisten.",
+    "Hasil ekstraksi teks PDF memuat beberapa kata terpotong dari dokumen aslinya (mis. 'pro sedur', 'olehoperator'); jawaban tidak bergantung pada kata-kata itu."
+  ],
+  "soal": [
+    {"id": "Q01", "kategori": "fakta", "pertanyaan": "Apa nomor dan revisi SOP Hauling OB?", "jawaban": "SOP nomor 005, revisi R00 (kode dokumen RIMS.RMKO-PRD-POS-005-R00-Hauling OB).", "kata_kunci": ["005", "R00"], "halaman": [1, 2], "tidak_ada": false},
+    {"id": "Q02", "kategori": "fakta", "pertanyaan": "Departemen apa yang menerbitkan SOP Hauling OB?", "jawaban": "Departemen Produksi, PT. Royaltama Mulia Kontraktorindo Tbk.", "kata_kunci": ["Departemen Produksi", "Royaltama Mulia Kontraktorindo"], "halaman": [1], "tidak_ada": false},
+    {"id": "Q03", "kategori": "fakta", "pertanyaan": "Kapan SOP ini disahkan dan apa alasan tinjauannya?", "jawaban": "25 Juni 2025; revisi R00 karena prosedur baru.", "kata_kunci": ["25 Juni 2025", "Prosedur baru"], "halaman": [3], "tidak_ada": false},
+    {"id": "Q04", "kategori": "fakta", "pertanyaan": "Siapa yang menyusun dan siapa yang memeriksa SOP ini?", "jawaban": "Disusun oleh Gabriel Fakrimar (Produksi Departement); diperiksa oleh Daniel Yosa (General Manager Operasional).", "kata_kunci": ["Gabriel Fakrimar", "Daniel Yosa"], "halaman": [3], "tidak_ada": false, "catatan": "Pemetaan nama ke jabatan diambil dari tabel di PDF; mohon dipastikan pada PDF asli."},
+    {"id": "Q05", "kategori": "fakta", "pertanyaan": "Apa tujuan SOP Hauling OB?", "jawaban": "Menetapkan langkah-langkah operasional yang aman, efisien, dan ramah lingkungan dalam kegiatan hauling overburden dari front ke disposal.", "kata_kunci": ["aman", "efisien", "ramah lingkungan", "front ke disposal"], "halaman": [4], "tidak_ada": false},
+    {"id": "Q06", "kategori": "fakta", "pertanyaan": "Alat angkut apa saja yang tercakup dalam ruang lingkup SOP ini?", "jawaban": "Dump Truck (DT) dan Heavy Dump (HD) di area operasional PT. Royaltama Mulia Kontraktorindo Tbk.", "kata_kunci": ["Dump Truck", "Heavy Dump"], "halaman": [4], "tidak_ada": false},
+    {"id": "Q07", "kategori": "fakta", "pertanyaan": "Apa yang dimaksud dengan Overburden (OB)?", "jawaban": "Material penutup batubara berupa tanah, batu, atau campuran yang tidak mengandung nilai ekonomis.", "kata_kunci": ["material penutup batubara", "tidak mengandung nilai ekonomis"], "halaman": [4], "tidak_ada": false},
+    {"id": "Q08", "kategori": "fakta", "pertanyaan": "Apa yang dimaksud dengan Disposal?", "jawaban": "Lokasi yang dirancang dan direncanakan untuk menampung material buangan overburden dari tambang.", "kata_kunci": ["menampung material buangan overburden"], "halaman": [4], "tidak_ada": false},
+    {"id": "Q09", "kategori": "fakta", "pertanyaan": "Apa yang dimaksud dengan Front?", "jawaban": "Lokasi penggalian material OB.", "kata_kunci": ["lokasi penggalian material OB"], "halaman": [4], "tidak_ada": false},
+    {"id": "Q10", "kategori": "fakta", "pertanyaan": "Apa tugas Production Dept. Head dalam SOP ini?", "jawaban": "Menyediakan pelatihan prosedur operasi standar, pengawasan, dan pelaporan atas penerapan; memastikan operasional pertambangan sesuai prosedur.", "kata_kunci": ["pelatihan prosedur operasi standar", "pengawasan"], "halaman": [5], "tidak_ada": false},
+    {"id": "Q11", "kategori": "fakta", "pertanyaan": "Apa tugas Supervisor/Foreman Production sebelum kegiatan dimulai?", "jawaban": "Melakukan inspeksi area kerja sebelum kegiatan dimulai (serta memastikan prosedur terlaksana, memberi instruksi kerja yang jelas, dan mengawasi aktivitas).", "kata_kunci": ["inspeksi area kerja sebelum kegiatan dimulai"], "halaman": [5], "tidak_ada": false},
+    {"id": "Q12", "kategori": "fakta", "pertanyaan": "Apa kewajiban pekerja menurut SOP ini?", "jawaban": "Memahami dan mematuhi persyaratan SOP, mengikuti arahan pengawas, dan melaporkan kekurangan praktik kerja aman kepada pengawas.", "kata_kunci": ["memahami dan mematuhi", "arahan pengawas", "melaporkan"], "halaman": [5], "tidak_ada": false},
+    {"id": "Q13", "kategori": "fakta", "pertanyaan": "Apa yang wajib dilakukan operator sebelum mengoperasikan alat?", "jawaban": "Melakukan P2H dengan mengisi form yang telah ditetapkan.", "kata_kunci": ["P2H", "form"], "halaman": [6], "tidak_ada": false},
+    {"id": "Q14", "kategori": "fakta", "pertanyaan": "Setelah melakukan P2H, formulir apa yang wajib diisi operator?", "jawaban": "Form time sheet yang telah ditetapkan.", "kata_kunci": ["time sheet"], "halaman": [6], "tidak_ada": false},
+    {"id": "Q15", "kategori": "fakta", "pertanyaan": "Apa nomor dokumen Form P2H untuk Dump Truck?", "jawaban": "RIMS.RMKO-HSE-FRM-008-002-R00 (Form P2H Alat Berat & DT type unit Wheel).", "kata_kunci": ["RIMS.RMKO-HSE-FRM-008-002-R00"], "halaman": [6, 9], "tidak_ada": false},
+    {"id": "Q16", "kategori": "fakta", "pertanyaan": "Apa nomor dokumen Form P2H untuk alat bertipe Track seperti excavator?", "jawaban": "RIMS.RMKO-HSE-FRM-008-003-R00 (Form P2H Alat Berat type Track).", "kata_kunci": ["RIMS.RMKO-HSE-FRM-008-003-R00"], "halaman": [9], "tidak_ada": false, "catatan": "Di halaman 6 nomor ini terpotong antar baris; daftar formulir lengkap ada di halaman 9."},
+    {"id": "Q17", "kategori": "fakta", "pertanyaan": "Apa nomor dokumen Time Sheet untuk unit Dump Truck?", "jawaban": "RIMS.RMKO-PRD-FRM-001-001-R00.", "kata_kunci": ["RIMS.RMKO-PRD-FRM-001-001-R00"], "halaman": [6, 9], "tidak_ada": false},
+    {"id": "Q18", "kategori": "fakta", "pertanyaan": "Bagaimana Dump Truck masuk ke area loading?", "jawaban": "Sesuai aba-aba operator excavator.", "kata_kunci": ["aba-aba operator excavator"], "halaman": [6], "tidak_ada": false},
+    {"id": "Q19", "kategori": "fakta", "pertanyaan": "Bagaimana aturan pengisian muatan ke Dump Truck?", "jawaban": "Dilakukan merata dan sesuai kapasitas aman truck (tidak overload); tidak ada material menggantung di tepi bak.", "kata_kunci": ["merata", "kapasitas aman", "tidak overload"], "halaman": [6], "tidak_ada": false},
+    {"id": "Q20", "kategori": "fakta", "pertanyaan": "Apakah boleh berbalik arah atau berbelok U di jalur hauling?", "jawaban": "Tidak boleh berbalik arah atau berbelok U (U turns) di sepanjang jalur haul road.", "kata_kunci": ["tidak boleh", "U turns"], "halaman": [6], "tidak_ada": false},
+    {"id": "Q21", "kategori": "fakta", "pertanyaan": "Berapa jarak aman antar unit saat pengangkutan?", "jawaban": "Minimal 3-5 kali panjang kendaraan.", "kata_kunci": ["jarak aman", "3-5"], "halaman": [6], "tidak_ada": false, "catatan": "Teks dokumen: 'minimal 3-5 unit Panjang kendaraan'."},
+    {"id": "Q22", "kategori": "fakta", "pertanyaan": "Siapa yang diberi prioritas di jalan sempit atau tikungan?", "jawaban": "Alat berat.", "kata_kunci": ["prioritas pada alat berat"], "halaman": [6], "tidak_ada": false},
+    {"id": "Q23", "kategori": "fakta", "pertanyaan": "Di mana komunikasi dua arah wajib dilakukan?", "jawaban": "Di area blind spot atau tanjakan.", "kata_kunci": ["komunikasi 2 arah", "blind spot", "tanjakan"], "halaman": [6], "tidak_ada": false},
+    {"id": "Q24", "kategori": "fakta", "pertanyaan": "Siapa yang mengarahkan hauler saat masuk ke area dumping?", "jawaban": "Spotter.", "kata_kunci": ["spotter"], "halaman": [7], "tidak_ada": false},
+    {"id": "Q25", "kategori": "fakta", "pertanyaan": "Bagaimana hauler harus mundur dan melakukan dumping di disposal?", "jawaban": "Mundur perlahan dengan posisi lurus dan berhenti sebelum batas aman; dumping dilakukan perlahan hingga material di vessel habis.", "kata_kunci": ["mundur perlahan", "posisi lurus", "batas aman", "dumping dilakukan perlahan"], "halaman": [7], "tidak_ada": false},
+    {"id": "Q26", "kategori": "fakta", "pertanyaan": "Apa yang dilakukan hauler setelah selesai membuang material OB?", "jawaban": "Segera maju.", "kata_kunci": ["segera maju"], "halaman": [7], "tidak_ada": false},
+    {"id": "Q27", "kategori": "fakta", "pertanyaan": "Bagaimana kondisi landasan area dumping yang disyaratkan?", "jawaban": "Stabil dan aman.", "kata_kunci": ["stabil dan aman"], "halaman": [7], "tidak_ada": false},
+    {"id": "Q28", "kategori": "fakta", "pertanyaan": "Apa isi bagian Data dan Catatan SOP ini?", "jawaban": "Tidak ada (baik Data maupun Catatan).", "kata_kunci": ["Tidak ada"], "halaman": [12], "tidak_ada": false},
+    {"id": "Q29", "kategori": "fakta", "pertanyaan": "Standar internasional apa yang dirujuk SOP ini untuk keselamatan dan kesehatan kerja?", "jawaban": "ISO 45001:2018 Occupational Health and Safety Management Systems.", "kata_kunci": ["ISO 45001"], "halaman": [13], "tidak_ada": false},
+    {"id": "Q30", "kategori": "fakta", "pertanyaan": "Kapan dokumen SOP yang dicetak dianggap tidak dikendalikan?", "jawaban": "Jika tercetak tanpa cap 'SALINAN TERKENDALI' pada setiap halaman.", "kata_kunci": ["SALINAN TERKENDALI"], "halaman": [2], "tidak_ada": false},
+
+    {"id": "Q31", "kategori": "parafrase", "pertanyaan": "Apa yang harus dikerjakan sopir truk sebelum mulai bekerja?", "jawaban": "Melakukan pemeriksaan harian alat (P2H) dengan mengisi form, lalu mengisi form time sheet.", "kata_kunci": ["P2H", "time sheet"], "halaman": [6], "tidak_ada": false},
+    {"id": "Q32", "kategori": "parafrase", "pertanyaan": "Boleh putar balik di jalan angkut tambang?", "jawaban": "Tidak boleh; berbalik arah atau berbelok U dilarang di sepanjang jalur haul road.", "kata_kunci": ["U turns"], "halaman": [6], "tidak_ada": false},
+    {"id": "Q33", "kategori": "parafrase", "pertanyaan": "Truk boleh diisi penuh sampai berapa pun?", "jawaban": "Tidak; pengisian harus sesuai kapasitas aman truck (tidak overload).", "kata_kunci": ["kapasitas aman", "overload"], "halaman": [6], "tidak_ada": false},
+    {"id": "Q34", "kategori": "parafrase", "pertanyaan": "Seberapa jauh harus menjaga jarak dengan truk di depan?", "jawaban": "Minimal 3-5 kali panjang kendaraan.", "kata_kunci": ["3-5"], "halaman": [6], "tidak_ada": false},
+    {"id": "Q35", "kategori": "parafrase", "pertanyaan": "Apa bedanya formulir untuk dump truck dan untuk excavator?", "jawaban": "Dump Truck (kendaraan beroda): P2H RIMS.RMKO-HSE-FRM-008-002-R00 dan Time Sheet RIMS.RMKO-PRD-FRM-001-001-R00. Alat bertipe Track seperti excavator: P2H RIMS.RMKO-HSE-FRM-008-003-R00 dan Time Sheet RIMS.RMKO-PRD-FRM-001-002-R00.", "kata_kunci": ["008-002", "008-003", "001-001", "001-002"], "halaman": [6, 9], "tidak_ada": false},
+
+    {"id": "Q36", "kategori": "multi-halaman", "pertanyaan": "Formulir apa saja yang harus diisi operator dump truck sebelum bekerja, beserta nomor dokumennya?", "jawaban": "Form P2H Alat Berat & DT type unit Wheel (RIMS.RMKO-HSE-FRM-008-002-R00), lalu Time Sheet unit DT (RIMS.RMKO-PRD-FRM-001-001-R00).", "kata_kunci": ["008-002", "001-001"], "halaman": [6, 9], "tidak_ada": false},
+    {"id": "Q37", "kategori": "multi-halaman", "pertanyaan": "Siapa yang bertanggung jawab atas pelatihan SOP dan siapa yang menginspeksi area kerja sebelum kegiatan?", "jawaban": "Pelatihan: Production Dept. Head. Inspeksi area kerja: Supervisor/Foreman Production.", "kata_kunci": ["Production Dept. Head", "Supervisor"], "halaman": [5], "tidak_ada": false},
+    {"id": "Q38", "kategori": "multi-halaman", "pertanyaan": "Jelaskan urutan kerja satu siklus hauling OB dari persiapan sampai disposal.", "jawaban": "Persiapan (P2H lalu time sheet) -> loading sesuai aba-aba operator excavator, muatan merata/tidak overload -> pengangkutan lewat jalur hauling dengan kecepatan sesuai aturan site dan jarak aman -> disposal: masuk sesuai arahan spotter, mundur perlahan lurus, dumping perlahan, lalu segera maju.", "kata_kunci": ["P2H", "loading", "spotter", "maju"], "halaman": [6, 7], "tidak_ada": false},
+
+    {"id": "Q39", "kategori": "sebagian", "pertanyaan": "Berapa kecepatan maksimum truk di jalur hauling?", "jawaban": "Angka kecepatan tidak disebut dalam SOP ini; dokumen hanya menyatakan kecepatan maksimum sesuai aturan site.", "kata_kunci": ["aturan site"], "halaman": [6], "tidak_ada": true, "pemicu_absen": ["km/jam", "km per jam", "kph"], "catatan": "AI harus mengatakan angkanya tidak ada dan merujuk ke aturan site, bukan menyebut angka."},
+    {"id": "Q40", "kategori": "sebagian", "pertanyaan": "Berapa kapasitas maksimal muatan dump truck dalam ton?", "jawaban": "Angka kapasitas tidak disebut; SOP hanya menyatakan pengisian sesuai kapasitas aman truck (tidak overload).", "kata_kunci": ["kapasitas aman"], "halaman": [6], "tidak_ada": true, "pemicu_absen": ["ton "]},
+    {"id": "Q41", "kategori": "dalam-gambar", "pertanyaan": "Apa saja butir yang diperiksa dalam P2H?", "jawaban": "Antara lain oli mesin, air radiator, minyak kopling, rem, oli hidrolik, sistem kemudi, klakson, tekanan udara, baut roda dan ban, serta lampu kerja (daftar lengkap pada formulir P2H di Lampiran, halaman 10).", "kata_kunci": ["Oli Mesin", "Air Radiator", "Rem", "Klakson", "Baut Roda"], "halaman": [10], "tidak_ada": false, "butuh_ocr": true, "catatan": "Isi formulir hanya ada sebagai gambar; teks dasar dokumen hanya memuat judul lampiran. Dicek terhadap hasil OCR halaman 10."},
+    {"id": "Q42", "kategori": "sebagian", "pertanyaan": "Apa isi diagram alir proses hauling OB?", "jawaban": "Dokumen tidak memuat diagram: halaman 8 hanya berisi judul 'Diagram Alir' tanpa gambar. AI harus mengatakan isi diagramnya tidak tersedia.", "kata_kunci": ["Diagram Alir"], "halaman": [8], "tidak_ada": true, "catatan": "Halaman 8 di PDF ini kosong (bukan gambar yang tak terbaca)."},
+
+    {"id": "Q43", "kategori": "tidak-ada", "pertanyaan": "Bagaimana prosedur pengisian BBM unit di jalur hauling?", "jawaban": "Tidak ada di SOP ini.", "kata_kunci": [], "halaman": [], "tidak_ada": true, "pemicu_absen": ["bbm", "solar", "bahan bakar"]},
+    {"id": "Q44", "kategori": "tidak-ada", "pertanyaan": "Apa sanksi bagi operator yang melanggar SOP ini?", "jawaban": "Tidak ada di SOP ini.", "kata_kunci": [], "halaman": [], "tidak_ada": true, "pemicu_absen": ["sanksi", "denda", "teguran"]},
+    {"id": "Q45", "kategori": "tidak-ada", "pertanyaan": "Apa yang harus dilakukan saat hujan lebat atau jalan licin?", "jawaban": "Tidak ada di SOP ini.", "kata_kunci": [], "halaman": [], "tidak_ada": true, "pemicu_absen": ["hujan", "licin"]},
+    {"id": "Q46", "kategori": "tidak-ada", "pertanyaan": "Berapa nomor telepon yang dihubungi saat keadaan darurat?", "jawaban": "Tidak ada di SOP ini.", "kata_kunci": [], "halaman": [], "tidak_ada": true, "pemicu_absen": ["telepon", "darurat", "kontak"]},
+    {"id": "Q47", "kategori": "tidak-ada", "pertanyaan": "Berapa jam kerja operator dalam satu shift?", "jawaban": "Tidak ada di SOP ini.", "kata_kunci": [], "halaman": [], "tidak_ada": true, "pemicu_absen": ["jam kerja", "shift"]},
+    {"id": "Q48", "kategori": "tidak-ada", "pertanyaan": "Bagaimana prosedur penanganan kecelakaan atau insiden di jalur hauling?", "jawaban": "Tidak ada di SOP ini.", "kata_kunci": [], "halaman": [], "tidak_ada": true, "pemicu_absen": ["kecelakaan", "insiden"]},
+
+    {"id": "Q49", "kategori": "ambigu", "pertanyaan": "Apa kepanjangan HD?", "jawaban": "Dokumen menyebut dua versi: 'Heavy Dump' (hal. 4) dan 'Haul Duty' (hal. 6). Jawaban baik menyebut keduanya dan mencatat ketidakkonsistenan.", "kata_kunci": ["Heavy Dump", "Haul Duty"], "halaman": [4, 6], "tidak_ada": false}
+  ]
+}

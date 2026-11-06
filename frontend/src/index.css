@@ -1,0 +1,31 @@
+/* Gaya global minimal. Warna --simha-* diisi dari src/lib/colors.ts (main.tsx). */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--simha-background);
+  color: var(--simha-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Ikon lucide di dalam menu & tombol antd sejajar dengan teks */
+.ant-menu-item .lucide,
+.ant-menu-submenu-title .lucide,
+.ant-btn .lucide {
+  flex-shrink: 0;
+}
+
+/* Popup peta Leaflet mengikuti huruf aplikasi */
+.leaflet-container {
+  font: inherit;
+}

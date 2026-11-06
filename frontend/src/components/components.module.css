@@ -1,0 +1,144 @@
+/* Gaya komponen bersama */
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.pageTitle {
+  margin: 0 !important;
+  color: var(--simha-primary-dark) !important;
+}
+
+.pageExtra {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Kartu dengan kepala berwarna (pengganti "blue header card" lama yang ditulis inline 10×) */
+.sectionCard :global(.ant-card-head) {
+  background: var(--simha-primary);
+  color: #fff;
+  min-height: 42px;
+}
+
+.sectionCard :global(.ant-card-head-title) {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.sectionCard :global(.ant-card-extra) {
+  color: #fff;
+}
+
+/* Daftar kartu untuk tabel di HP */
+.mobileList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mobileCard :global(.ant-card-body) {
+  padding: 12px;
+}
+
+.mobileTitle {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--simha-primary-dark);
+}
+
+.mobileRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  padding: 2px 0;
+}
+
+.mobileLabel {
+  color: var(--simha-muted);
+  flex-shrink: 0;
+}
+
+.mobileValue {
+  text-align: right;
+  word-break: break-word;
+}
+
+.mobileActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+  border-top: 1px solid var(--simha-border);
+  padding-top: 8px;
+}
+
+.tableToolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.filterBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+/* label di samping isian (di laci HP: label di atas, lihat FilterBar) */
+.filterField {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.filterLabel {
+  font-size: 13px;
+  color: var(--simha-muted);
+  white-space: nowrap;
+}
+
+/* Peta + panel samping */
+.mapShell {
+  display: grid;
+  gap: 12px;
+  height: 100%;
+  min-height: 0;
+}
+
+.mapPane {
+  position: relative;
+  min-height: 420px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--simha-border);
+  background: #e5e7eb;
+}
+
+.mapPanel {
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mapToggle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 500;
+}

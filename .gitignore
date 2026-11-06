@@ -1,0 +1,22 @@
+# RAHASIA — jangan pernah masuk Git
+.env
+.env.*
+!.env.example
+**/keys/
+
+# Hasil build / file sementara
+**/bin/
+*.exe
+**/node_modules/
+**/dist/
+*.local
+
+# Editor & sistem
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Dokumentasi internal (tidak ikut repository)
+/docs/

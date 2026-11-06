@@ -1,0 +1,108 @@
+.unitIconWrap {
+  background: transparent;
+  border: 0;
+}
+
+.unit {
+  position: relative;
+  border-radius: 50%;
+}
+
+.unit img {
+  display: block;
+  pointer-events: none;
+}
+
+.selected {
+  box-shadow: 0 0 0 4px rgb(240 165 0 / 0.55), 0 1px 4px rgb(0 0 0 / 0.45);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    box-shadow: 0 0 0 9px rgb(240 165 0 / 0.15), 0 1px 4px rgb(0 0 0 / 0.45);
+  }
+}
+
+/* panah arah gerak di tepi atas */
+.arrow {
+  position: absolute;
+  inset: -9px;
+  pointer-events: none;
+}
+
+.arrow::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-bottom: 7px solid #111827;
+}
+
+.badge {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #dc2626;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 14px;
+  text-align: center;
+}
+
+.unitLabel {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 3px;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgb(255 255 255 / 0.9);
+  padding: 0 4px;
+  border-radius: 4px;
+}
+
+.zoneLabel {
+  font-size: 11px;
+}
+
+.legend {
+  position: absolute;
+  left: 10px;
+  bottom: 24px;
+  z-index: 500;
+  background: rgb(255 255 255 / 0.95);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.2);
+  max-width: 180px;
+}
+
+.legendTitle {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.legendRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.6;
+}
+
+.legendDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
