@@ -1,11 +1,27 @@
 /// <reference types="vitest/config" />
 import { fileURLToPath, URL } from 'node:url'
-import { defineConfig, loadEnv } from 'vite'
+import { defineConfig, loadEnv, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 
 // Saat development, browser hanya bicara ke Vite (port 8881). Vite meneruskan:
 //   /core/... → core-api (3346)   /iot/... dan /iot/ws/live → layanan IoT (3347)   /ai/... → AI Brain (3348)
 // Di produksi, Nginx melakukan hal yang sama → tidak ada masalah CORS.
+// Alamat tanpa garis miring (/operans) disamakan dengan /operans/ — tanpa ini Vite hanya menampilkan petunjuk
+// "did you mean to visit /operans/". Dipakai di dev server dan di `vite preview` (server produksi).
+function trailingSlashBase(base: string): Plugin {
+  const bare = base.replace(/\/$/, '')
+  const rewrite = (req: { url?: string }, _res: unknown, next: () => void) => {
+    const url = req.url ?? ''
+    if (url === bare || url.startsWith(`${bare}?`)) req.url = `${base}${url.slice(bare.length)}`
+    next()
+  }
+  return {
+    name: 'trailing-slash-base',
+    configureServer: (server) => void server.middlewares.use(rewrite), // tanpa return → dipasang paling awal
+    configurePreviewServer: (server) => void server.middlewares.use(rewrite),
+  }
+}
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const core = env.CORE_API_URL || 'http://localhost:3346'
@@ -14,7 +30,7 @@ export default defineConfig(({ mode }) => {
   const base = `/${(env.APP_BASE_PATH || '/operans').replace(/^\/+|\/+$/g, '')}/`
   return {
     base, // aplikasi dibuka di http://localhost:PORT/operans/ (API tetap di /core, /iot, /ai)
-    plugins: [react()],
+    plugins: [react(), trailingSlashBase(base)],
     resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
     server: {
       host: env.FRONTEND_HOST || '0.0.0.0', // 0.0.0.0 = bisa dibuka dari komputer lain; "localhost" = hanya server ini
