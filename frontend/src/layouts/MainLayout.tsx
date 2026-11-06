@@ -16,7 +16,7 @@ export default function MainLayout() {
   const setCollapsed = useUiStore((s) => s.setSiderCollapsed)
 
   useEffect(() => {
-    document.title = `${routeOf(pathname)?.title ?? 'SIMHA'} — SIMHA`
+    document.title = `${routeOf(pathname)?.title ?? 'OPERANS'} — OPERANS`
   }, [pathname])
 
   // Pindah ke ukuran HP: menu samping ditutup.

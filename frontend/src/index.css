@@ -1,4 +1,4 @@
-/* Gaya global minimal. Warna --simha-* diisi dari src/lib/colors.ts (main.tsx). */
+/* Gaya global minimal. Warna --operans-* diisi dari src/lib/colors.ts (main.tsx). */
 *,
 *::before,
 *::after {
@@ -13,8 +13,8 @@ body,
 }
 
 body {
-  background: var(--simha-background);
-  color: var(--simha-text);
+  background: var(--operans-background);
+  color: var(--operans-text);
   -webkit-font-smoothing: antialiased;
 }
 

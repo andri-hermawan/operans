@@ -1,4 +1,4 @@
-// Bentuk umum jawaban backend SIMHA.
+// Bentuk umum jawaban backend OPERANS.
 
 /** Daftar standar: { data: [...], count? }. */
 export interface ListResponse<T> {

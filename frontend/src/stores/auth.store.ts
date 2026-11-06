@@ -6,7 +6,7 @@ import { authApi } from '@/services/api/auth.api'
 import { setAuthBridge } from '@/services/http/client'
 import type { AuthStatus, Membership, Role, Session, SessionUser } from '@/types/auth.types'
 
-const REFRESH_KEY = 'simha.refresh'
+const REFRESH_KEY = 'operans.refresh'
 const storage = {
   get: () => {
     try {

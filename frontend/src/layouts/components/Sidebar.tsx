@@ -22,7 +22,7 @@ function Brand({ collapsed }: { collapsed: boolean }) {
   return (
     <div className={styles.brand} style={{ justifyContent: collapsed ? 'center' : 'flex-start' }}>
       <img src={logo} alt="RMKO" className={styles.brandLogo} />
-      {!collapsed && <span className={styles.brandText}>Operation Management System</span>}
+      {!collapsed && <span className={styles.brandText}>OPERANS</span>}
     </div>
   )
 }

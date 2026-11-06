@@ -6,9 +6,9 @@ import { brand } from '@/utils/colors'
 import App from './App'
 import { adoptPrintToken } from '@/utils/printToken'
 
-// Warna merek → variabel CSS (--simha-primary, ...), agar file .css memakai sumber warna yang sama dengan tema.
+// Warna merek → variabel CSS (--operans-primary, ...), agar file .css memakai sumber warna yang sama dengan tema.
 for (const [key, value] of Object.entries(brand)) {
-  document.documentElement.style.setProperty(`--simha-${key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`, value)
+  document.documentElement.style.setProperty(`--operans-${key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`, value)
 }
 
 adoptPrintToken() // halaman cetak PDF (jadwal laporan)

@@ -10,7 +10,7 @@
 
 .pageTitle {
   margin: 0 !important;
-  color: var(--simha-primary-dark) !important;
+  color: var(--operans-primary-dark) !important;
 }
 
 .pageExtra {
@@ -21,7 +21,7 @@
 
 /* Kartu dengan kepala berwarna (pengganti "blue header card" lama yang ditulis inline 10×) */
 .sectionCard :global(.ant-card-head) {
-  background: var(--simha-primary);
+  background: var(--operans-primary);
   color: #fff;
   min-height: 42px;
 }
@@ -51,7 +51,7 @@
 .mobileTitle {
   font-weight: 600;
   margin-bottom: 6px;
-  color: var(--simha-primary-dark);
+  color: var(--operans-primary-dark);
 }
 
 .mobileRow {
@@ -63,7 +63,7 @@
 }
 
 .mobileLabel {
-  color: var(--simha-muted);
+  color: var(--operans-muted);
   flex-shrink: 0;
 }
 
@@ -77,7 +77,7 @@
   justify-content: flex-end;
   gap: 8px;
   margin-top: 8px;
-  border-top: 1px solid var(--simha-border);
+  border-top: 1px solid var(--operans-border);
   padding-top: 8px;
 }
 
@@ -107,7 +107,7 @@
 
 .filterLabel {
   font-size: 13px;
-  color: var(--simha-muted);
+  color: var(--operans-muted);
   white-space: nowrap;
 }
 
@@ -124,7 +124,7 @@
   min-height: 420px;
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid var(--simha-border);
+  border: 1px solid var(--operans-border);
   background: #e5e7eb;
 }
 

@@ -6,8 +6,8 @@
 .chapter {
   margin-bottom: 16px;
   padding: 18px 20px;
-  background: var(--simha-surface);
-  border: 1px solid var(--simha-border);
+  background: var(--operans-surface);
+  border: 1px solid var(--operans-border);
   border-radius: 12px;
 }
 
@@ -49,7 +49,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px 14px;
-  border: 1px solid var(--simha-border);
+  border: 1px solid var(--operans-border);
   border-radius: 12px;
   background: #fafbfc;
 }
@@ -73,12 +73,12 @@
   margin-left: 4px;
   font-size: 12px;
   font-weight: 500;
-  color: var(--simha-muted);
+  color: var(--operans-muted);
 }
 
 .statLabel {
   font-size: 12px;
-  color: var(--simha-muted);
+  color: var(--operans-muted);
 }
 
 .subTitle {
@@ -130,7 +130,7 @@
 
 .statusName {
   font-size: 11px;
-  color: var(--simha-muted);
+  color: var(--operans-muted);
 }
 
 /* Daftar kartu kecil (breakdown, alert terbaru) */
@@ -147,7 +147,7 @@
   align-items: center;
   gap: 10px;
   padding: 8px 10px;
-  border: 1px solid var(--simha-border);
+  border: 1px solid var(--operans-border);
   border-radius: 10px;
 }
 
@@ -173,6 +173,6 @@
 }
 
 .feedMeta {
-  color: var(--simha-muted);
+  color: var(--operans-muted);
   font-size: 11px;
 }

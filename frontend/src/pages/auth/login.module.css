@@ -6,13 +6,13 @@
   padding: 16px;
   background:
     radial-gradient(circle at 15% 20%, rgb(240 165 0 / 0.12), transparent 40%),
-    linear-gradient(135deg, var(--simha-primary-dark) 0%, var(--simha-primary) 60%, #1d6fb8 100%);
+    linear-gradient(135deg, var(--operans-primary-dark) 0%, var(--operans-primary) 60%, #1d6fb8 100%);
 }
 
 .card {
   width: 100%;
   max-width: 420px;
-  background: var(--simha-surface);
+  background: var(--operans-surface);
   border-radius: 16px;
   padding: 36px 32px 24px;
   box-shadow: 0 20px 50px rgb(8 58 104 / 0.35);
@@ -30,7 +30,7 @@
   margin: 12px 0 4px;
   font-size: 17px;
   font-weight: 700;
-  color: var(--simha-primary-dark);
+  color: var(--operans-primary-dark);
 }
 
 .error {

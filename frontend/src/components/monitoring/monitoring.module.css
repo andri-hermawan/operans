@@ -6,7 +6,7 @@
 .infoTitle {
   font-weight: 700;
   font-size: 13px;
-  color: var(--simha-primary-dark);
+  color: var(--operans-primary-dark);
   margin-bottom: 6px;
 }
 
@@ -18,14 +18,14 @@
 }
 
 .infoRow > span:first-child {
-  color: var(--simha-muted);
+  color: var(--operans-muted);
 }
 
 .listHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--simha-primary);
+  background: var(--operans-primary);
   color: #fff;
   font-weight: 600;
   font-size: 13px;
@@ -43,20 +43,20 @@
 }
 
 .listItem {
-  border: 1px solid var(--simha-border);
+  border: 1px solid var(--operans-border);
   border-radius: 8px;
   padding: 8px 10px;
-  background: var(--simha-surface);
+  background: var(--operans-surface);
   cursor: pointer;
   font-size: 12px;
 }
 
 .listItem:hover {
-  border-color: var(--simha-primary);
+  border-color: var(--operans-primary);
 }
 
 .listItemActive {
-  border-color: var(--simha-accent);
+  border-color: var(--operans-accent);
   box-shadow: 0 0 0 2px rgb(240 165 0 / 0.35);
 }
 
@@ -68,7 +68,7 @@
 }
 
 .muted {
-  color: var(--simha-muted);
+  color: var(--operans-muted);
 }
 
 .panelFilters {
@@ -92,7 +92,7 @@
 }
 
 .statGrid > span:nth-child(4n + 1) {
-  color: var(--simha-muted);
+  color: var(--operans-muted);
 }
 
 .playback {
@@ -207,7 +207,7 @@
 }
 
 .assetAction {
-  color: var(--simha-primary);
+  color: var(--operans-primary);
   font-size: 16px;
 }
 
@@ -236,7 +236,7 @@
   font-size: 11px;
   font-weight: 600;
   color: #fff;
-  background: var(--simha-primary);
+  background: var(--operans-primary);
   border-radius: 4px;
   padding: 2px 8px;
   cursor: pointer;
@@ -391,14 +391,14 @@
   align-items: center;
   gap: 10px;
   padding: 8px 10px;
-  border: 1px solid var(--simha-border);
+  border: 1px solid var(--operans-border);
   border-radius: 10px;
-  background: var(--simha-surface);
+  background: var(--operans-surface);
   cursor: pointer;
 }
 
 .alertCard:hover {
-  border-color: var(--simha-primary);
+  border-color: var(--operans-primary);
 }
 
 .alertBadge {
@@ -425,7 +425,7 @@
 
 .alertCode {
   font-weight: 700;
-  color: var(--simha-primary-dark);
+  color: var(--operans-primary-dark);
 }
 
 .alertMeta {
@@ -434,7 +434,7 @@
   gap: 2px 12px;
   margin-top: 2px;
   font-size: 11px;
-  color: var(--simha-muted);
+  color: var(--operans-muted);
 }
 
 .alertMeta span {
@@ -447,7 +447,7 @@
 .listBox {
   padding: 8px;
   background: #fff;
-  border: 1px solid var(--simha-border);
+  border: 1px solid var(--operans-border);
   border-radius: 8px;
 }
 

@@ -53,6 +53,6 @@ export const useAlertStore = create<AlertState>()(
           return { scope, inbox: [], seen: { ...s.seen, [scope]: maxId } }
         }),
     }),
-    { name: 'simha.alert-seen', partialize: (s) => ({ seen: s.seen }) },
+    { name: 'operans.alert-seen', partialize: (s) => ({ seen: s.seen }) },
   ),
 )

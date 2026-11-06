@@ -1,6 +1,6 @@
-# SIMHA Web (frontend)
+# OPERANS Web (frontend)
 
-Aplikasi web SIMHA: React + TypeScript + Vite + Ant Design. Rancangan: ADR 0010
+Aplikasi web OPERANS: React + TypeScript + Vite + Ant Design. Rancangan: ADR 0010
 (`docs/adr/0010-frontend.md`). Layout & nama menu mengikuti FMS lama.
 
 ## Menjalankan di komputer sendiri
@@ -20,7 +20,7 @@ Yang harus sudah menyala: **core-api** (port 3346) dan **layanan IoT** (port 334
    npm run dev
    ```
 
-4. Buka **http://localhost:8881** lalu login dengan akun SIMHA.
+4. Buka **http://localhost:8881** lalu login dengan akun OPERANS.
 
 Perintah lain:
 
@@ -121,7 +121,7 @@ keadaan di sisi aplikasi (login, menu samping).
 
 ## Login & keamanan
 
-- Access token hanya di memori; refresh token di `localStorage` (`simha.refresh`) agar tetap login saat halaman
+- Access token hanya di memori; refresh token di `localStorage` (`operans.refresh`) agar tetap login saat halaman
   dimuat ulang. Sesi diperpanjang otomatis sekali saat server menjawab 401.
 - Hak akses menu & halaman: `src/utils/permissions.ts` (superadmin, admin, dispatcher, viewer).
 - Jangan menulis email/password/token di kode.

@@ -15,7 +15,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  border-bottom: 3px solid var(--simha-primary);
+  border-bottom: 3px solid var(--operans-primary);
   padding-bottom: 10px;
   margin-bottom: 14px;
 }
@@ -23,12 +23,12 @@
 .title {
   font-size: 20px;
   font-weight: 700;
-  color: var(--simha-primary-dark);
+  color: var(--operans-primary-dark);
 }
 
 .sub {
   font-size: 12px;
-  color: var(--simha-muted);
+  color: var(--operans-muted);
 }
 
 @media print {

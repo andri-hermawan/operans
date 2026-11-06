@@ -6,7 +6,7 @@
 .sider {
   height: 100vh;
   overflow: auto;
-  border-right: 1px solid var(--simha-border);
+  border-right: 1px solid var(--operans-border);
 }
 
 .main {
@@ -22,7 +22,7 @@
   align-items: center;
   gap: 10px;
   padding: 0 18px;
-  border-bottom: 1px solid var(--simha-border);
+  border-bottom: 1px solid var(--operans-border);
 }
 
 .brandLogo {
@@ -31,10 +31,12 @@
 }
 
 .brandText {
-  color: var(--simha-primary-dark);
-  font-weight: 600;
-  font-size: 13px;
-  line-height: 1.25;
+  color: var(--operans-primary-dark);
+  font-weight: 700;
+  font-size: 20px; /* satu kata pendek: dibuat setinggi logo (32px) agar seimbang */
+  letter-spacing: 0.08em;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .menu {
@@ -50,7 +52,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  border-bottom: 1px solid var(--simha-border);
+  border-bottom: 1px solid var(--operans-border);
   box-shadow: 0 1px 3px rgb(15 23 42 / 0.06);
   position: sticky;
   top: 0;
@@ -58,7 +60,7 @@
 }
 
 .projectName {
-  color: var(--simha-primary-dark);
+  color: var(--operans-primary-dark);
 }
 
 .userButton {
@@ -78,7 +80,7 @@
 }
 
 .avatar {
-  background: var(--simha-primary) !important;
+  background: var(--operans-primary) !important;
 }
 
 .userText {
@@ -95,7 +97,7 @@
 
 .userRole {
   font-size: 11px;
-  color: var(--simha-muted);
+  color: var(--operans-muted);
 }
 
 .content {
@@ -198,5 +200,5 @@
 
 .alertMuted {
   font-size: 12px;
-  color: var(--simha-muted);
+  color: var(--operans-muted);
 }
