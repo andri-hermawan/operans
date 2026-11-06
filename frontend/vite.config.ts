@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
     server: {
+      host: env.FRONTEND_HOST || '0.0.0.0', // 0.0.0.0 = bisa dibuka dari komputer lain; "localhost" = hanya server ini
       port: Number(env.FRONTEND_PORT) || 8881,
       proxy: {
         '/core': { target: core, changeOrigin: true, rewrite: (p) => p.replace(/^\/core/, '') },
