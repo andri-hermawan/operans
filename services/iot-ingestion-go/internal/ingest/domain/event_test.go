@@ -52,6 +52,24 @@ func TestValidate(t *testing.T) {
 	}
 }
 
+func TestNormalizeMileageSamaDenganOdometer(t *testing.T) {
+	e := Event{Engine: Engine{OdometerM: ptr(125000.0), MileageM: ptr(99.0)}}
+	e.Normalize()
+	if e.MileageM == nil || *e.MileageM != 125000 {
+		t.Fatalf("mileage harus sama dengan odometer: %v", e.MileageM)
+	}
+	e = Event{Engine: Engine{OdometerM: ptr(500.0)}} // tanpa mileage dari alat
+	e.Normalize()
+	if e.MileageM == nil || *e.MileageM != 500 {
+		t.Fatalf("mileage kosong harus diisi dari odometer: %v", e.MileageM)
+	}
+	e = Event{Engine: Engine{MileageM: ptr(77.0)}} // tanpa odometer: mileage alat dibiarkan
+	e.Normalize()
+	if e.MileageM == nil || *e.MileageM != 77 {
+		t.Fatalf("tanpa odometer, mileage alat tidak boleh berubah: %v", e.MileageM)
+	}
+}
+
 func TestNormalizePosisiNol(t *testing.T) {
 	e := Event{Position: Position{Latitude: ptr(0.0), Longitude: ptr(0.0)}}
 	e.Normalize()

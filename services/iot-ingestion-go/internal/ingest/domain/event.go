@@ -145,6 +145,12 @@ func (e *Event) Normalize() {
 	if e.Latitude != nil && e.Longitude != nil && *e.Latitude == 0 && *e.Longitude == 0 {
 		e.Latitude, e.Longitude = nil, nil
 	}
+	// Mileage (dipakai Activity Summary) disamakan dengan odometer alat: tidak semua unit punya mileage dari ECU (CAN),
+	// sedangkan odometer GPS selalu ada. Nilai mentah mileage CAN tetap tersimpan di metadata.io.
+	if e.OdometerM != nil {
+		m := *e.OdometerM
+		e.MileageM = &m
+	}
 	if e.Metadata == nil {
 		e.Metadata = map[string]any{}
 	}
