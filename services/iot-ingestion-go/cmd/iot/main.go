@@ -1,4 +1,4 @@
-// Program iot = layanan IoT Ingestion SIMHA (HTTP :5550, TCP Teltonika :3347, WebSocket /ws/live).
+// Program iot = layanan IoT Ingestion SIMHA (HTTP :3347, TCP Teltonika :5550, WebSocket /ws/live).
 //
 // Di file ini SEMUA fitur dirakit (ADR 0011): buat repository → service → handler, lalu daftarkan route.
 // Siapa memakai siapa:

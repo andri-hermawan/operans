@@ -5,7 +5,7 @@ Aplikasi web SIMHA: React + TypeScript + Vite + Ant Design. Rancangan: ADR 0010
 
 ## Menjalankan di komputer sendiri
 
-Yang harus sudah menyala: **core-api** (port 3346) dan **layanan IoT** (port 5550).
+Yang harus sudah menyala: **core-api** (port 3346) dan **layanan IoT** (port 3347).
 
 1. Buka PowerShell di folder ini (`operans\frontend`).
 2. Sekali saja (atau setelah `package.json` berubah), pasang paket:
@@ -37,7 +37,7 @@ Browser hanya bicara ke Vite (8881). Vite meneruskan:
 | Alamat di browser | Diteruskan ke |
 |---|---|
 | `/core/...` | core-api `http://localhost:3346/...` |
-| `/iot/...` (termasuk WebSocket `/iot/ws/live`) | layanan IoT `http://localhost:5550/...` |
+| `/iot/...` (termasuk WebSocket `/iot/ws/live`) | layanan IoT `http://localhost:3347/...` |
 
 Alamat lain bisa diatur di `.env` (contoh: `.env.example`). Di produksi Nginx melakukan hal yang sama.
 

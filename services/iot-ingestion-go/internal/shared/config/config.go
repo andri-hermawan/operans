@@ -60,8 +60,8 @@ func getlist(key, def string) []string {
 func Load() (Config, error) {
 	loadDotEnv(".env")
 	cfg := Config{
-		HTTPAddr:            getenv("HTTP_ADDR", ":5550"),
-		TCPAddr:             getenv("TCP_ADDR", ":3347"),
+		HTTPAddr:            getenv("HTTP_ADDR", ":3347"),
+		TCPAddr:             getenv("TCP_ADDR", ":5550"),
 		DatabaseURL:         os.Getenv("DATABASE_URL"),
 		JWTPublicKeyFile:    os.Getenv("JWT_PUBLIC_KEY_FILE"),
 		JWTIssuer:           getenv("JWT_ISSUER", "simha-core"),

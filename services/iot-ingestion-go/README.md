@@ -1,6 +1,6 @@
 # iot-ingestion-go
 
-Layanan IoT SIMHA: menerima data alat GPS Teltonika (**TCP 3347**) & simulator (**HTTP 5550**), mengolahnya
+Layanan IoT SIMHA: menerima data alat GPS Teltonika (**TCP 5550**) & simulator (**HTTP 3347**), mengolahnya
 (zona, status, muatan, fuel, alert, geofence), menyimpan ke schema `iot`, menyiarkan ke peta live (WebSocket), dan
 melayani API baca untuk halaman pemantauan.
 

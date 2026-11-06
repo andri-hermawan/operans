@@ -13,7 +13,7 @@ operans/
 │   └── adr/               ← catatan keputusan (ADR 0001–0015)
 ├── services/
 │   ├── core-api-go/       ← login, user, master data, input harian & rencana (Record / Upload), peta area, laporan (port 3346)
-│   ├── iot-ingestion-go/  ← terima data alat GPS, peta live, riwayat, alert (HTTP 5550 & TCP alat GPS 3347)
+│   ├── iot-ingestion-go/  ← terima data alat GPS, peta live, riwayat, alert (HTTP 3347 & TCP alat GPS 5550)
 │   └── ai-brain-py/       ← AI Brain (Python/FastAPI): pustaka SOP, pencarian (port 3348)
 └── frontend/              ← aplikasi web React (port 8881)
 ```
@@ -65,16 +65,16 @@ Pengaturan (database, kunci, port) dibaca otomatis dari file `.env` di folder ma
 | Program | Folder | Port | Perintah |
 |---|---|---|---|
 | core-api | `services\core-api-go` | 3346 | `go run ./cmd/api` |
-| IoT | `services\iot-ingestion-go` | 5550 (HTTP), 3347 (TCP alat GPS) | `go run ./cmd/iot` |
+| IoT | `services\iot-ingestion-go` | 3347 (HTTP), 5550 (TCP alat GPS) | `go run ./cmd/iot` |
 | AI Brain | `services\ai-brain-py` | 3348 | `.venv\Scripts\uvicorn app.main:build_app --factory --port 3348` (persiapan sekali: README service) |
 | Frontend | `frontend` | 8881 | `npm run dev` |
 
 Contoh: `cd services\core-api-go` lalu `go run ./cmd/api`. Tunggu log `HTTP mendengarkan`. Buka http://localhost:8881 dan login.
-Cek hidup: http://localhost:3346/health dan http://localhost:5550/health (harus `"status":"ok"`).
+Cek hidup: http://localhost:3346/health dan http://localhost:3347/health (harus `"status":"ok"`).
 `go run` pertama kali mengompilasi ± 10–30 detik; itu normal.
 
 **Mematikan:** klik jendela cmd lalu **Ctrl + C**. Untuk program tanpa jendela: `netstat -ano | findstr :3346 | findstr LISTENING`
-(IoT `5550`, frontend `8881`), lalu `taskkill /PID <nomor> /F`.
+(IoT `3347`, frontend `8881`), lalu `taskkill /PID <nomor> /F`.
 
 **Email laporan terjadwal:** PDF dibuat Chrome (harus terpasang) dari halaman cetak frontend, jadi frontend harus menyala
 (`FRONTEND_URL` di `.env` core-api). Isi `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM` di

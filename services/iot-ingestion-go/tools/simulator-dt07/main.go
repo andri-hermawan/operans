@@ -45,7 +45,7 @@ type langkah struct {
 }
 
 func main() {
-	iot := flag.String("iot", "http://localhost:5550", "alamat IoT SIMHA")
+	iot := flag.String("iot", "http://localhost:3347", "alamat IoT SIMHA")
 	key := flag.String("key", os.Getenv("SIMULATOR_API_KEY"), "API key alat 863719065713472 di iot.devices (X-API-Key)")
 	hariIni := time.Now().In(wibZone()).Format("2006-01-02")
 	mulai := flag.String("mulai", hariIni+" 07:00:00", "jam data pertama (WIB). Bawaan: hari ini 07:00:00, sama dengan simulator DT02 lama (TODAY)")

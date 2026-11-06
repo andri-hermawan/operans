@@ -45,7 +45,7 @@ type langkah struct {
 }
 
 func main() {
-	iot := flag.String("iot", "http://localhost:5550", "alamat IoT SIMHA")
+	iot := flag.String("iot", "http://localhost:3347", "alamat IoT SIMHA")
 	key := flag.String("key", os.Getenv("SIMULATOR_API_KEY"), "API key alat equipment "+equipmentID+" di iot.devices (X-API-Key)")
 	mulai := flag.String("mulai", "", "jam data pertama (WIB), mis. \"2026-11-05 18:55:00\". Bawaan: kosong = mulai tepat sekian menit lalu supaya data terakhir jatuh di jam sekarang (server menolak data di masa depan)")
 	jarak := flag.Duration("jarak", 30*time.Second, "selisih jam antar data (sama dengan skenario lama)")
