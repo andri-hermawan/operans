@@ -176,7 +176,9 @@ func (s *Ingest) Handle(ctx context.Context, dev *devicedomain.Device, e *domain
 		e.Tracker = &tr
 		e.AlertCount = alertCount(prev, e, fuelOut, alertOut)
 	} else {
-		// data terlambat: status muatan, selisih fuel & kejadian dibiarkan kosong (urutannya tidak diketahui)
+		// data terlambat: status muatan diperkirakan dari kondisi terakhir (tidak mengubahnya); selisih fuel & kejadian
+		// dibiarkan kosong (urutannya tidak diketahui)
+		domain.ApplyVesselLate(prev, e)
 		domain.FuelLitersOnly(cal, e)
 	}
 

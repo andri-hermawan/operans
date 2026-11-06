@@ -46,9 +46,17 @@ func VesselStatus(fid int32, lastFID *int32, lastStatus *string, equipmentStatus
 	return VesselEmpty
 }
 
+func operationOf(e *Event) string {
+	if e.EquipmentStatus != nil {
+		return *e.EquipmentStatus
+	}
+	return ""
+}
+
 // ApplyVessel mengisi status muatan event dari kondisi terakhir unit (prev, boleh nil) dan
 // memperbarui acuan "zona terakhir di dalam". Hanya untuk data BERURUTAN (bukan data terlambat).
-// Tanpa posisi (zona tidak diketahui) → status & acuan dibawa dari kondisi sebelumnya.
+// Tanpa posisi (zona tidak diketahui) → status & acuan dibawa dari kondisi sebelumnya; unit yang belum punya
+// kondisi sebelumnya dianggap di luar zona (fid 0) sehingga hasilnya tetap terisi (empty / unknown), seperti sistem lama.
 func ApplyVessel(prev *LiveState, e *Event) {
 	var lastFID *int32
 	var lastStatus, prevVessel *string
@@ -57,12 +65,13 @@ func ApplyVessel(prev *LiveState, e *Event) {
 	}
 	if e.GeofenceFID == nil {
 		e.VesselStatus, e.LastInsideFID, e.LastInsideVesselStatus = prevVessel, lastFID, lastStatus
+		if e.VesselStatus == nil {
+			status := VesselStatus(0, lastFID, lastStatus, operationOf(e))
+			e.VesselStatus = &status
+		}
 		return
 	}
-	op := ""
-	if e.EquipmentStatus != nil {
-		op = *e.EquipmentStatus
-	}
+	op := operationOf(e)
 	fid := *e.GeofenceFID
 	status := VesselStatus(fid, lastFID, lastStatus, op)
 	e.VesselStatus = &status
@@ -71,4 +80,25 @@ func ApplyVessel(prev *LiveState, e *Event) {
 	} else {
 		e.LastInsideFID, e.LastInsideVesselStatus = lastFID, lastStatus
 	}
+}
+
+// ApplyVesselLate mengisi status muatan untuk data TERLAMBAT (alat sempat offline lalu mengirim ulang data lama).
+// Urutan data ini tidak diketahui, jadi acuan "zona terakhir di dalam" dipakai apa adanya dan TIDAK diperbarui
+// (kondisi terakhir unit tidak boleh terganggu data lama). Hasilnya perkiraan, tetapi kolom tidak pernah kosong.
+func ApplyVesselLate(prev *LiveState, e *Event) {
+	var lastFID *int32
+	var lastStatus, prevVessel *string
+	if prev != nil {
+		lastFID, lastStatus, prevVessel = prev.LastInsideFID, prev.LastInsideVesselStatus, prev.VesselStatus
+	}
+	if e.GeofenceFID == nil && prevVessel != nil { // tanpa posisi: ikut status terakhir unit
+		e.VesselStatus = prevVessel
+		return
+	}
+	var fid int32
+	if e.GeofenceFID != nil {
+		fid = *e.GeofenceFID
+	}
+	status := VesselStatus(fid, lastFID, lastStatus, operationOf(e))
+	e.VesselStatus = &status
 }

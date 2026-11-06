@@ -80,6 +80,46 @@ func TestVesselStatusAturanLama(t *testing.T) {
 	}
 }
 
+// Status muatan tidak boleh kosong: data berurutan tanpa zona/riwayat, dan data terlambat.
+func TestVesselStatusTidakPernahKosong(t *testing.T) {
+	i := func(v int32) *int32 { return &v }
+	s := func(v string) *string { return &v }
+	run, stop := StatusRunning, StatusStop
+
+	// berurutan, zona tidak diketahui, belum ada riwayat → empty (stop → unknown)
+	e := &Event{EquipmentStatus: &run}
+	ApplyVessel(nil, e)
+	if e.VesselStatus == nil || *e.VesselStatus != VesselEmpty {
+		t.Fatalf("tanpa zona & riwayat harus empty: %v", e.VesselStatus)
+	}
+	e = &Event{EquipmentStatus: &stop}
+	ApplyVessel(nil, e)
+	if e.VesselStatus == nil || *e.VesselStatus != VesselUnknown {
+		t.Fatalf("stop tanpa zona harus unknown: %v", e.VesselStatus)
+	}
+
+	// terlambat: dihitung dari kondisi terakhir, acuan zona terakhir TIDAK diubah
+	prev := &LiveState{LastInsideFID: i(5), LastInsideVesselStatus: s(VesselLoaded), VesselStatus: s(VesselLoaded)}
+	e = &Event{EquipmentStatus: &run, GeofenceFID: i(3)} // fid turun → loaded
+	ApplyVesselLate(prev, e)
+	if e.VesselStatus == nil || *e.VesselStatus != VesselLoaded {
+		t.Fatalf("terlambat: %v", e.VesselStatus)
+	}
+	if e.LastInsideFID != nil || e.LastInsideVesselStatus != nil {
+		t.Fatal("data terlambat tidak boleh mengubah acuan zona terakhir")
+	}
+	e = &Event{EquipmentStatus: &run} // tanpa posisi → ikut status terakhir unit
+	ApplyVesselLate(prev, e)
+	if e.VesselStatus == nil || *e.VesselStatus != VesselLoaded {
+		t.Fatalf("terlambat tanpa posisi: %v", e.VesselStatus)
+	}
+	e = &Event{EquipmentStatus: &run} // tanpa posisi & tanpa kondisi terakhir
+	ApplyVesselLate(&LiveState{}, e)
+	if e.VesselStatus == nil || *e.VesselStatus != VesselEmpty {
+		t.Fatalf("terlambat tanpa riwayat: %v", e.VesselStatus)
+	}
+}
+
 // Aturan geofence lama: kejadian hanya untuk area ber-ORIG_FID 0 (rute seperti simulator DT03:
 // CSA → trase → Jembatan Timbang → Km 01 → Km 02 → luar jalur).
 func TestGeofenceTransitionsAturanLama(t *testing.T) {
