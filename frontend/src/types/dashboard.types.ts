@@ -7,6 +7,7 @@ export type DashboardUnitRow = ShiftPerformanceRow & { status: string; pa: numbe
 export interface DashboardKpi {
   units: number
   online: number
+  offline: number
   running: number
   ritase: number
   tonnes: number

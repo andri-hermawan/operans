@@ -176,3 +176,47 @@
   color: var(--operans-muted);
   font-size: 11px;
 }
+
+/* Kondisi armada per tipe unit */
+.typeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.typeCard {
+  padding: 14px;
+  border: 1px solid var(--operans-border);
+  border-radius: 12px;
+  background: #fafbfc;
+}
+
+.typeHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.typeIcon {
+  display: grid;
+  place-items: center;
+  color: #475569;
+}
+
+.typeName {
+  font-weight: 700;
+}
+
+.typeTotal {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--operans-muted);
+}
+
+.typeStatuses {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 14px;
+}

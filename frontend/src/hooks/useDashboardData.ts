@@ -10,6 +10,7 @@ import { useAlerts } from './useAlerts'
 import { useCodeOf } from './useCodeOf'
 import { useBreakdownDaily, useWeighbridgeDaily } from './useDailyReport'
 import { useEquipmentBreakdowns } from './useEquipmentBreakdowns'
+import { useEquipmentList } from './useEquipments'
 import { useFuelEvents } from './useFuelEvents'
 import { useLiveStates } from './useLiveStates'
 import { useShifts } from './useShifts'
@@ -18,6 +19,13 @@ import { useActivity } from './useTelemetry'
 const round = (v: number, d = 1) => Math.round(v * 10 ** d) / 10 ** d
 const sum = (vs: number[]) => vs.reduce((s, v) => s + v, 0)
 
+/** Unit milik sendiri. Kode berawalan DT8 (mis. DT809093) = unit mitra, tidak dihitung di produksi. */
+export const isOwnUnit = (code: string) => !/^DT8/i.test(code)
+
+/** Tipe unit yang ditampilkan di Bagian 1 Dashboard (urutan tampil). */
+export const FLEET_TYPES = ['Dump Truck', 'Water Truck', 'Fuel Truck'] as const
+export type FleetTypeRow = { type: string; total: number; online: number; running: number; idle: number; stop: number; breakdown: number }
+
 /** Semua angka Dashboard untuk satu tanggal operasional + shift (kosong = semua shift). */
 export function useDashboardData(slot: Slot) {
   const { data: shifts = [] } = useShifts()
@@ -25,6 +33,7 @@ export function useDashboardData(slot: Slot) {
   const shift = shifts.find((s) => s.shift_code === slot.shift)
   const shiftId = shift?.id
   const { data: states = [] } = useLiveStates()
+  const { data: equipments = [] } = useEquipmentList(true)
   const activity = useActivity({ date: slot.date, shift: slot.shift })
   const alerts = useAlerts({ date: slot.date, shift: slot.shift })
   const fuel = useFuelEvents({ date: slot.date, shift: slot.shift })
@@ -43,6 +52,21 @@ export function useDashboardData(slot: Slot) {
     }
     return m
   }, [states])
+
+  /** Kondisi armada dikelompokkan per tipe unit (status live; breakdown menimpa status operasi). */
+  const byType = useMemo<FleetTypeRow[]>(() => {
+    const typeOf = new Map(equipments.map((e) => [e.id, e.equipment_type]))
+    const m = new Map<string, FleetTypeRow>(FLEET_TYPES.map((t) => [t, { type: t, total: 0, online: 0, running: 0, idle: 0, stop: 0, breakdown: 0 }]))
+    for (const s of states) {
+      const row = m.get(typeOf.get(s.equipment_id) ?? '')
+      if (!row) continue
+      const st = s.is_breakdown ? 'breakdown' : (s.equipment_status ?? 'offline')
+      row.total++
+      if (s.equipment_status && s.equipment_status !== 'offline') row.online++
+      if (st === 'running' || st === 'idle' || st === 'stop' || st === 'breakdown') row[st]++
+    }
+    return [...m.values()]
+  }, [states, equipments])
 
   const alertList = useMemo(() => alerts.data?.data ?? [], [alerts.data])
 
@@ -63,17 +87,22 @@ export function useDashboardData(slot: Slot) {
     return out.sort((a, b) => a.code.localeCompare(b.code))
   }, [states, activity.data, wb.data, bd.data, alertList, codeOf, hoursAvailable])
 
+  const ownRows = useMemo(() => rows.filter((r) => isOwnUnit(r.code)), [rows])
+
   const kpi = useMemo<DashboardKpi>(() => {
     const units = states.length || rows.length
+    const online = states.filter((s) => s.equipment_status && s.equipment_status !== 'offline').length
     const running = sum(rows.map((r) => r.running))
     const breakdownHours = sum(rows.map((r) => r.breakdown))
-    const ritase = sum(rows.map((r) => r.ritase))
-    const tonnes = sum(rows.map((r) => r.production))
+    const own = rows.filter((r) => isOwnUnit(r.code))
+    const ritase = sum(own.map((r) => r.ritase))
+    const tonnes = sum(own.map((r) => r.production))
     const moving = rows.filter((r) => r.running > 0)
     const burnRows = rows.filter((r) => r.burn > 0)
     return {
       units,
-      online: states.filter((s) => s.equipment_status && s.equipment_status !== 'offline').length,
+      online,
+      offline: units - online,
       running: byStatus.running ?? 0,
       ritase,
       tonnes: round(tonnes, 1),
@@ -121,8 +150,10 @@ export function useDashboardData(slot: Slot) {
     shift,
     hoursAvailable,
     byStatus,
+    byType,
     kpi,
     rows,
+    ownRows,
     timeUsage,
     alertByType,
     alertByHour,

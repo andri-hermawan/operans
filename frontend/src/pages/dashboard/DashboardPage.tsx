@@ -1,7 +1,7 @@
 // Dashboard — satu shift diceritakan lewat kartu dan grafik, berurutan: kondisi armada → produksi → waktu kerja →
 // breakdown → pergerakan & BBM → alert → rincian per unit. Semua mengikuti filter Tanggal + Shift.
 import { Col, Row, Tag } from 'antd'
-import { Activity, Clock, Fuel, Gauge, MapPin, Package, Play, Radio, Route, Scale, ShieldCheck, Timer, Truck, TriangleAlert, Users, Wrench } from 'lucide-react'
+import { Activity, Clock, Fuel, Gauge, MapPin, Package, Radio, WifiOff, Route, Scale, ShieldCheck, Timer, Truck, TriangleAlert, Users, Wrench } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import { useDashboardData } from '@/hooks/useDashboardData'
@@ -16,7 +16,7 @@ import PageHeader from '@/components/ui/PageHeader'
 import { AlertByHourChart, AlertByTypeChart } from './components/AlertCharts'
 import BreakdownFeed from './components/BreakdownFeed'
 import Chapter from './components/Chapter'
-import FleetStatusBar from './components/FleetStatusBar'
+import FleetByType from './components/FleetByType'
 import RecentAlerts from './components/RecentAlerts'
 import TimeUsageChart from './components/TimeUsageChart'
 import UnitPerformanceTable from './components/UnitPerformanceTable'
@@ -60,23 +60,23 @@ export default function DashboardPage() {
         stats={[
           { icon: Truck, label: 'Unit terpantau', value: n(kpi.units) },
           { icon: Radio, label: 'Online', value: n(kpi.online), color: brand.info },
-          { icon: Play, label: 'Running', value: n(kpi.running), color: equipmentStatusColor.running },
+          { icon: WifiOff, label: 'Offline', value: n(kpi.offline), color: equipmentStatusColor.offline },
         ]}
       >
-        <FleetStatusBar byStatus={d.byStatus} total={kpi.units} />
+        <FleetByType rows={d.byType} />
       </Chapter>
 
       <Chapter
         no={2}
-        title="Produksi"
+        title="Produksi (unit sendiri)"
         stats={[
           { icon: Package, label: 'Ritase', value: n(kpi.ritase), unit: 'rit', color: brand.info },
           { icon: Scale, label: 'Produksi', value: n(kpi.tonnes, 1), unit: 'ton', color: brand.success },
           { icon: Gauge, label: 'Payload rata-rata', value: n(kpi.payload, 1), unit: 'ton/rit', color: brand.accent },
-          { icon: Users, label: 'Unit berproduksi', value: n(d.rows.filter((r) => r.ritase > 0).length) },
+          { icon: Users, label: 'Unit berproduksi', value: n(d.ownRows.filter((r) => r.ritase > 0).length) },
         ]}
       >
-        <UnitProductionChart rows={d.rows} />
+        <UnitProductionChart rows={d.ownRows} />
       </Chapter>
 
       <Chapter
