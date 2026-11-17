@@ -91,6 +91,7 @@ type Derived struct {
 	OperationalDate      *string `json:"-"` // YYYY-MM-DD = tanggal mulai shift
 	ShiftCode            *string `json:"-"`
 	OperatorName         *string `json:"-"`
+	EquipmentType        *string `json:"-"` // tipe unit ("Dump Truck", "Water Truck", …); nil = belum diketahui
 	IsBreakdown          *bool   `json:"-"`
 	BreakdownDescription *string `json:"-"`
 

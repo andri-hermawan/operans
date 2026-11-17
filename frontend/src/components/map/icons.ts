@@ -13,24 +13,28 @@ const IMAGES = new Map(
 
 type BaseStatus = 'running' | 'idle' | 'stop'
 
+/** Tipe unit yang punya ikon sendiri (awalan nama berkas). Tipe lain memakai ikon truk dump bawaan. */
+const TYPE_PREFIX: Record<string, string> = { 'Water Truck': 'watertruck_', 'Fuel Truck': 'fueltruck_' }
+
 /** Nama berkas: <status>_<muatan>[_<kombinasi>]. Dua tanda → "2Combine", tiga → "3Combine". */
-function imageUrl(status: BaseStatus, vessel: string, flags: { alert: boolean; offline: boolean; breakdown: boolean }) {
+function imageUrl(type: string | null | undefined, status: BaseStatus, vessel: string, flags: { alert: boolean; offline: boolean; breakdown: boolean }) {
   const parts = [flags.alert && 'alert', flags.offline && 'offline', flags.breakdown && 'breakdown'].filter(Boolean) as string[]
   const combine = parts.length > 1 ? `_${parts.length}combine` : ''
-  const key = `${status}_${vessel}${combine}${parts.map((p) => `_${p}`).join('')}`.toLowerCase()
+  const key = `${(type && TYPE_PREFIX[type]) || ''}${status}_${vessel}${combine}${parts.map((p) => `_${p}`).join('')}`.toLowerCase()
   return IMAGES.get(key)
 }
 
 /** Unit tanpa status yang dikenal (offline / belum ada data) memakai dasar "stop" + tanda offline, seperti sistem lama. */
 const baseOf = (status?: string | null): BaseStatus => (status === 'running' || status === 'idle' ? status : 'stop')
 
-type UnitIconOptions = { code: string; status?: string | null; vessel?: string | null; heading?: number | null; alert?: boolean; breakdown?: boolean; selected?: boolean; showLabel?: boolean }
+type UnitIconOptions = { code: string; type?: string | null; status?: string | null; vessel?: string | null; heading?: number | null; alert?: boolean; breakdown?: boolean; selected?: boolean; showLabel?: boolean }
 
 /** Alamat gambar marker sebuah unit (dipakai juga oleh daftar unit di panel). */
-export function unitImageUrl(o: Pick<UnitIconOptions, 'status' | 'vessel' | 'alert' | 'breakdown'>) {
-  const vessel = o.vessel === 'loaded' || o.vessel === 'empty' ? o.vessel : 'unknown'
+export function unitImageUrl(o: Pick<UnitIconOptions, 'type' | 'status' | 'vessel' | 'alert' | 'breakdown'>) {
+  // Water/Fuel Truck tidak membawa muatan → hanya ikon "unknown"
+  const vessel = !(o.type && TYPE_PREFIX[o.type]) && (o.vessel === 'loaded' || o.vessel === 'empty') ? o.vessel : 'unknown'
   const offline = !o.status || o.status === 'offline'
-  return imageUrl(baseOf(o.status), vessel, { alert: !!o.alert, offline, breakdown: !!o.breakdown })
+  return imageUrl(o.type, baseOf(o.status), vessel, { alert: !!o.alert, offline, breakdown: !!o.breakdown })
 }
 
 export function unitIcon(o: UnitIconOptions) {

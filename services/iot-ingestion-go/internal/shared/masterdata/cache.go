@@ -68,6 +68,7 @@ type ShiftRow struct {
 type EquipmentRow struct {
 	ID, ProjectID uuid.UUID
 	Code          string
+	Type          string // equipment_type (mis. "Dump Truck"); kosong bila belum diisi
 }
 
 type OperatorRow struct {
@@ -155,6 +156,7 @@ type dayKey struct {
 type snapshot struct {
 	projects       map[uuid.UUID]project
 	equipment      map[uuid.UUID]string // equipment_id → kode unit
+	equipmentTypes map[uuid.UUID]string // equipment_id → tipe unit (hanya yang terisi)
 	operators      map[dayKey]string
 	breakdowns     map[dayKey][]BreakdownRow                  // per tanggal+shift+unit
 	unitBreakdowns map[unitKey][]BreakdownRow                 // per unit, yang terbaru diinput di depan (status menempel)
@@ -186,7 +188,7 @@ func (c *Cache) OnReload(f func(parts []string)) {
 
 func New(store Store) *Cache {
 	c := &Cache{store: store}
-	c.snap.Store(&snapshot{projects: map[uuid.UUID]project{}, equipment: map[uuid.UUID]string{},
+	c.snap.Store(&snapshot{projects: map[uuid.UUID]project{}, equipment: map[uuid.UUID]string{}, equipmentTypes: map[uuid.UUID]string{},
 		operators: map[dayKey]string{}, breakdowns: map[dayKey][]BreakdownRow{}, unitBreakdowns: map[unitKey][]BreakdownRow{}, zones: map[uuid.UUID][]domain.Zone{},
 		calibrations: map[uuid.UUID]*domain.Calibration{}, rules: map[uuid.UUID]map[string]domain.AlertRules{},
 		recipients: map[uuid.UUID]Recipient{}})
@@ -210,7 +212,7 @@ func (c *Cache) Reload(ctx context.Context, parts ...string) error {
 		case PartProjects:
 			err = keep(&next.projects, c.loadProjects, ctx)
 		case PartEquipment:
-			err = keep(&next.equipment, c.loadEquipment, ctx)
+			err = c.reloadEquipment(ctx, &next)
 		case PartOperators:
 			err = keep(&next.operators, c.loadOperators, ctx)
 		case PartBreakdowns:
@@ -272,16 +274,22 @@ func (c *Cache) loadProjects(ctx context.Context) (map[uuid.UUID]project, error)
 	return out, nil
 }
 
-func (c *Cache) loadEquipment(ctx context.Context) (map[uuid.UUID]string, error) {
+// reloadEquipment memuat kode & tipe unit sekaligus (satu query). Gagal → data lama tetap dipakai.
+func (c *Cache) reloadEquipment(ctx context.Context, next *snapshot) error {
 	rows, err := c.store.LoadEquipment(ctx)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	out := make(map[uuid.UUID]string, len(rows))
+	codes := make(map[uuid.UUID]string, len(rows))
+	types := make(map[uuid.UUID]string, len(rows))
 	for _, r := range rows {
-		out[r.ID] = strings.ToUpper(r.Code)
+		codes[r.ID] = strings.ToUpper(r.Code)
+		if t := strings.TrimSpace(r.Type); t != "" {
+			types[r.ID] = t
+		}
 	}
-	return out, nil
+	next.equipment, next.equipmentTypes = codes, types
+	return nil
 }
 
 func (c *Cache) loadOperators(ctx context.Context) (map[dayKey]string, error) {
@@ -403,6 +411,11 @@ func (c *Cache) Enrich(projectID, equipmentID *uuid.UUID, e *domain.Event) {
 		return
 	}
 	s := c.snap.Load()
+	if equipmentID != nil { // tipe unit dipakai aturan status muatan; tidak bergantung pada shift
+		if t, ok := s.equipmentTypes[*equipmentID]; ok {
+			e.EquipmentType = &t
+		}
+	}
 	enrichZone(s.zones[*projectID], e)
 	p, ok := s.projects[*projectID]
 	if !ok {

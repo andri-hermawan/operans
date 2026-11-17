@@ -46,6 +46,27 @@ func VesselStatus(fid int32, lastFID *int32, lastStatus *string, equipmentStatus
 	return VesselEmpty
 }
 
+// TypeDumpTruck = satu-satunya tipe unit yang punya status muatan loaded/empty (keputusan 2026-11-17).
+const TypeDumpTruck = "Dump Truck"
+
+// hasVesselLogic: unit tanpa tipe diperlakukan seperti Dump Truck (data induk belum lengkap, perilaku lama).
+func hasVesselLogic(e *Event) bool {
+	return e.EquipmentType == nil || *e.EquipmentType == TypeDumpTruck
+}
+
+// NonDumpVessel = status muatan unit BUKAN Dump Truck (Water/Fuel Truck, dll.): tidak pernah loaded/empty.
+//
+//	di dalam zona   → kosong (nil)
+//	di luar zona    → unknown (off-track)
+//	posisi/zona tidak diketahui → kosong, kecuali ada status sebelumnya yang dibawa pemanggil
+func NonDumpVessel(e *Event) *string {
+	if e.IsInsideGeofence != nil && !*e.IsInsideGeofence {
+		u := VesselUnknown
+		return &u
+	}
+	return nil
+}
+
 func operationOf(e *Event) string {
 	if e.EquipmentStatus != nil {
 		return *e.EquipmentStatus
@@ -58,6 +79,10 @@ func operationOf(e *Event) string {
 // Tanpa posisi (zona tidak diketahui) → status & acuan dibawa dari kondisi sebelumnya; unit yang belum punya
 // kondisi sebelumnya dianggap di luar zona (fid 0) sehingga hasilnya tetap terisi (empty / unknown), seperti sistem lama.
 func ApplyVessel(prev *LiveState, e *Event) {
+	if !hasVesselLogic(e) {
+		e.VesselStatus, e.LastInsideFID, e.LastInsideVesselStatus = NonDumpVessel(e), nil, nil
+		return
+	}
 	var lastFID *int32
 	var lastStatus, prevVessel *string
 	if prev != nil {
@@ -86,6 +111,10 @@ func ApplyVessel(prev *LiveState, e *Event) {
 // Urutan data ini tidak diketahui, jadi acuan "zona terakhir di dalam" dipakai apa adanya dan TIDAK diperbarui
 // (kondisi terakhir unit tidak boleh terganggu data lama). Hasilnya perkiraan, tetapi kolom tidak pernah kosong.
 func ApplyVesselLate(prev *LiveState, e *Event) {
+	if !hasVesselLogic(e) {
+		e.VesselStatus = NonDumpVessel(e)
+		return
+	}
 	var lastFID *int32
 	var lastStatus, prevVessel *string
 	if prev != nil {

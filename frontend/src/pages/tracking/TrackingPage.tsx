@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { Input, Table, Tag, Tooltip } from 'antd'
 
 import { useAlerts } from '@/hooks/useAlerts'
-import { useCodeOf } from '@/hooks/useCodeOf'
+import { useCodeOf, useTypeOf } from '@/hooks/useCodeOf'
+import { hasVessel } from '@/utils/equipmentType'
 import { useCollapseSider } from '@/hooks/useCollapseSider'
 import { useLiveSocket } from '@/hooks/useLiveSocket'
 import { useLiveStates } from '@/hooks/useLiveStates'
@@ -35,6 +36,7 @@ export default function TrackingPage() {
   const { data: zones } = useZones()
   const { data: shifts = [] } = useShifts()
   const codeOf = useCodeOf()
+  const typeOf = useTypeOf()
   // tanggal & shift dikunci dan mengikuti shift yang sedang berjalan (berganti otomatis saat shift/tanggal berganti)
   const { values, slot } = useSlotFilters({}, { follow: true })
   const [selected, setSelected] = useState<string>()
@@ -48,8 +50,8 @@ export default function TrackingPage() {
   const actOf = useMemo(() => new Map((activity.data?.data ?? []).map((a) => [a.equipment_id, a])), [activity.data])
 
   const units = useMemo(
-    () => states.map((s) => ({ ...s, code: codeOf(s.equipment_id) })).filter((s) => s.code.toLowerCase().includes(search.toLowerCase())).sort((a, b) => a.code.localeCompare(b.code)),
-    [states, codeOf, search],
+    () => states.map((s) => ({ ...s, code: codeOf(s.equipment_id), type: typeOf(s.equipment_id) })).filter((s) => s.code.toLowerCase().includes(search.toLowerCase())).sort((a, b) => a.code.localeCompare(b.code)),
+    [states, codeOf, typeOf, search],
   )
   const withPos = units.filter((u) => u.latitude != null && u.longitude != null)
   // Tampilan awal: unit AKTIF saja (yang offline posisinya sudah lama), tanpa pencilan, dan tidak terpengaruh kolom cari.
@@ -148,7 +150,7 @@ export default function TrackingPage() {
               <UnitMarker
                 key={u.equipment_id}
                 position={[u.latitude!, u.longitude!]}
-                icon={unitIcon({ code: u.code, status: u.equipment_status, vessel: u.vessel_status, heading: u.heading_deg, alert: u.alert_count > 0, breakdown: !!u.is_breakdown, selected: u.equipment_id === selected, showLabel: true })}
+                icon={unitIcon({ code: u.code, type: u.type, status: u.equipment_status, vessel: u.vessel_status, heading: u.heading_deg, alert: u.alert_count > 0, breakdown: !!u.is_breakdown, selected: u.equipment_id === selected, showLabel: true })}
                 onClick={() => setSelected(u.equipment_id)}
                 open={u.equipment_id === selected}
                 popup={
@@ -156,7 +158,7 @@ export default function TrackingPage() {
                     title={u.code}
                     d={{
                       time: u.event_time, speed: u.speed_kph, fuelLiter: u.fuel_volume_liter, fuelPercent: u.fuel_percent, segment: u.segment_name,
-                      vessel: u.vessel_status, engine: u.is_engine_on, operator: u.operator_name, lat: u.latitude, lon: u.longitude,
+                      vessel: hasVessel(u.type) ? u.vessel_status : undefined, engine: u.is_engine_on, operator: u.operator_name, lat: u.latitude, lon: u.longitude,
                       extra: [
                         ...(u.alert_count ? [{ label: 'Alert shift', value: u.alert_count }] : []),
                         // deskripsi (mis. "AC HOT") hanya selama masih breakdown; sesudah ready baris ini hilang

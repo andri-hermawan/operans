@@ -11,6 +11,8 @@ import type { AssetUnit } from './AssetList'
 import styles from './monitoring.module.css'
 
 interface Group {
+  key: string
+  type: string
   url: string
   codes: string[]
   lastUpdate?: string
@@ -23,11 +25,13 @@ export default function AssetStatus({ units }: { units: AssetUnit[] }) {
   const groups = useMemo(() => {
     const m = new Map<string, Group>()
     for (const u of units) {
-      const url = unitImageUrl({ status: u.equipment_status, vessel: u.vessel_status, alert: u.alert_count > 0, breakdown: !!u.is_breakdown }) ?? ''
-      const g = m.get(url) ?? { url, codes: [] }
+      const type = u.type || 'Dump Truck'
+      const url = unitImageUrl({ type: u.type, status: u.equipment_status, vessel: u.vessel_status, alert: u.alert_count > 0, breakdown: !!u.is_breakdown }) ?? ''
+      const key = `${type}|${url}`
+      const g = m.get(key) ?? { key, type, url, codes: [] }
       g.codes.push(u.code)
       if (u.event_time && (!g.lastUpdate || u.event_time > g.lastUpdate)) g.lastUpdate = u.event_time
-      m.set(url, g)
+      m.set(key, g)
     }
     return [...m.values()].sort((a, b) => b.codes.length - a.codes.length)
   }, [units])
@@ -40,13 +44,13 @@ export default function AssetStatus({ units }: { units: AssetUnit[] }) {
       </div>
       {groups.length === 0 && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Belum ada status unit" />}
       {groups.map((g) => {
-        const expanded = open === g.url
+        const expanded = open === g.key
         return (
-          <div key={g.url} className={styles.assetItem}>
-            <div className={`${styles.assetRow} ${expanded ? styles.assetRowActive : ''}`} onClick={() => setOpen(expanded ? undefined : g.url)}>
+          <div key={g.key} className={styles.assetItem}>
+            <div className={`${styles.assetRow} ${expanded ? styles.assetRowActive : ''}`} onClick={() => setOpen(expanded ? undefined : g.key)}>
               <span className={styles.assetName} style={{ fontStyle: 'normal' }}>
                 {g.url && <img src={g.url} alt="" className={styles.assetIcon} />}
-                <b>{g.codes.length} Dump Truck</b>
+                <b>{g.codes.length} {g.type}</b>
               </span>
               <MenuOutlined className={styles.assetAction} style={{ fontSize: 14 }} />
             </div>

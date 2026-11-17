@@ -32,9 +32,9 @@ func (r *Repository) LoadShifts(ctx context.Context) ([]ShiftRow, error) {
 }
 
 func (r *Repository) LoadEquipment(ctx context.Context) ([]EquipmentRow, error) {
-	return collectRows(ctx, r, `SELECT equipment_id, project_id, equipment_code FROM core.v_iot_equipment`,
+	return collectRows(ctx, r, `SELECT equipment_id, project_id, equipment_code, COALESCE(equipment_type, '') FROM core.v_iot_equipment`,
 		func(row pgx.Rows, x *EquipmentRow) error {
-			return row.Scan(&x.ID, &x.ProjectID, &x.Code)
+			return row.Scan(&x.ID, &x.ProjectID, &x.Code, &x.Type)
 		})
 }
 

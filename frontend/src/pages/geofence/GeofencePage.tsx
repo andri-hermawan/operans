@@ -4,7 +4,8 @@ import { DatePicker, Select, Space } from 'antd'
 import dayjs from 'dayjs'
 
 import type { ZoneCollection } from '@/types/zone.types'
-import { useCodeOf } from '@/hooks/useCodeOf'
+import { useCodeOf, useTypeOf } from '@/hooks/useCodeOf'
+import { hasVessel } from '@/utils/equipmentType'
 import { useCollapseSider } from '@/hooks/useCollapseSider'
 import { useGeofenceEvents } from '@/hooks/useGeofenceEvents'
 import { useLiveSocket } from '@/hooks/useLiveSocket'
@@ -35,6 +36,7 @@ export default function GeofencePage() {
   const { data: states = [] } = useLiveStates()
   const { data: shifts = [] } = useShifts()
   const codeOf = useCodeOf()
+  const typeOf = useTypeOf()
   // tanggal & shift dikunci dan mengikuti shift yang sedang berjalan (berganti otomatis saat shift/tanggal berganti)
   const { values, set, slot } = useSlotFilters({ segment: undefined }, { follow: true })
   const segment = values.segment
@@ -128,7 +130,7 @@ export default function GeofencePage() {
               <UnitMarker
                 key={s.equipment_id}
                 position={[s.latitude!, s.longitude!]}
-                icon={unitIcon({ code: codeOf(s.equipment_id), status: s.equipment_status, vessel: s.vessel_status, heading: s.heading_deg, showLabel: true })}
+                icon={unitIcon({ code: codeOf(s.equipment_id), type: typeOf(s.equipment_id), status: s.equipment_status, vessel: hasVessel(typeOf(s.equipment_id)) ? s.vessel_status : undefined, heading: s.heading_deg, showLabel: true })}
                 popup={<InfoRows title={codeOf(s.equipment_id)} d={{ time: s.event_time, speed: s.speed_kph, segment: s.segment_name, status: s.equipment_status, vessel: s.vessel_status, lat: s.latitude, lon: s.longitude }} />}
                 onClick={() => s.segment_name && areaNames.includes(s.segment_name) && set({ segment: s.segment_name })}
               />

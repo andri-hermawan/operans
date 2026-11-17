@@ -10,7 +10,8 @@ import type { AlertRow } from '@/types/alert.types'
 import type { HistoryMode } from '@/types/monitoring.types'
 import type { Point } from '@/types/telemetry.types'
 import { useAlerts } from '@/hooks/useAlerts'
-import { useCodeOf } from '@/hooks/useCodeOf'
+import { useCodeOf, useTypeOf } from '@/hooks/useCodeOf'
+import { hasVessel } from '@/utils/equipmentType'
 import { useFuelEvents } from '@/hooks/useFuelEvents'
 import { useSlotFilters } from '@/hooks/useSlotFilters'
 import { usePoints } from '@/hooks/useTelemetry'
@@ -35,6 +36,7 @@ const STEP_MS = 850
 export default function HistoryView({ mode }: { mode: HistoryMode }) {
   const { data: zones } = useZones()
   const codeOf = useCodeOf()
+  const typeOf = useTypeOf()
   const { values, set, slot } = useSlotFilters({ equipment: undefined })
   const ready = !!slot.equipmentId
   const points = usePoints(slot, { enabled: ready })
@@ -86,6 +88,7 @@ export default function HistoryView({ mode }: { mode: HistoryMode }) {
 
   const cur: Point | undefined = rows[idx]
   const code = codeOf(slot.equipmentId)
+  const type = typeOf(slot.equipmentId)
   const path = rows.map((p) => [p.latitude!, p.longitude!] as [number, number])
 
   const chart = useMemo<EChartsOption>(() => {
@@ -181,7 +184,7 @@ export default function HistoryView({ mode }: { mode: HistoryMode }) {
                   <UnitMarker
                     key={p.id}
                     position={[p.latitude!, p.longitude!]}
-                    icon={unitIcon({ code, status: p.equipment_status, vessel: p.vessel_status, heading: p.heading_deg, alert: true, breakdown: !!p.is_breakdown })}
+                    icon={unitIcon({ code, type, status: p.equipment_status, vessel: p.vessel_status, heading: p.heading_deg, alert: true, breakdown: !!p.is_breakdown })}
                     popup={<InfoRows title={`${code} · ${alertAt.get(i)!.join(', ')}`} d={{ time: p.event_time, speed: p.speed_kph, fuelPercent: p.fuel_percent, segment: p.segment_name, lat: p.latitude, lon: p.longitude }} />}
                     onClick={() => { setIdx(i); setPlaying(false) }}
                   />
@@ -198,8 +201,8 @@ export default function HistoryView({ mode }: { mode: HistoryMode }) {
               {cur && (
                 <UnitMarker
                   position={[cur.latitude!, cur.longitude!]}
-                  icon={unitIcon({ code, status: cur.equipment_status, vessel: cur.vessel_status, heading: cur.heading_deg, alert: alertAt.has(idx), breakdown: !!cur.is_breakdown, selected: true, showLabel: true })}
-                  popup={<InfoRows title={code} d={{ time: cur.event_time, speed: cur.speed_kph, fuelLiter: cur.fuel_volume_liter, fuelPercent: cur.fuel_percent, segment: cur.segment_name, status: cur.equipment_status, vessel: cur.vessel_status, engine: cur.is_engine_on, operator: cur.operator_name, lat: cur.latitude, lon: cur.longitude }} />}
+                  icon={unitIcon({ code, type, status: cur.equipment_status, vessel: cur.vessel_status, heading: cur.heading_deg, alert: alertAt.has(idx), breakdown: !!cur.is_breakdown, selected: true, showLabel: true })}
+                  popup={<InfoRows title={code} d={{ time: cur.event_time, speed: cur.speed_kph, fuelLiter: cur.fuel_volume_liter, fuelPercent: cur.fuel_percent, segment: cur.segment_name, status: cur.equipment_status, vessel: hasVessel(type) ? cur.vessel_status : undefined, engine: cur.is_engine_on, operator: cur.operator_name, lat: cur.latitude, lon: cur.longitude }} />}
                 />
               )}
               {/* saat diputar peta mengikuti setiap titik; selain itu hanya saat titik dipilih */}

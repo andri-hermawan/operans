@@ -3,7 +3,8 @@ import { useMemo, useState } from 'react'
 import { Empty } from 'antd'
 
 import { useAlerts } from '@/hooks/useAlerts'
-import { useCodeOf } from '@/hooks/useCodeOf'
+import { useCodeOf, useTypeOf } from '@/hooks/useCodeOf'
+import { hasVessel } from '@/utils/equipmentType'
 import { useLiveSocket } from '@/hooks/useLiveSocket'
 import { useSlotFilters } from '@/hooks/useSlotFilters'
 import { useZones } from '@/hooks/useZones'
@@ -26,6 +27,7 @@ export default function DistributionMapPage() {
   useLiveSocket() // alert baru → peta diperbarui
   const { data: zones } = useZones()
   const codeOf = useCodeOf()
+  const typeOf = useTypeOf()
   const { values, set, slot } = useSlotFilters({ type: undefined })
   const alerts = useAlerts({ date: slot.date, shift: slot.shift, equipmentId: slot.equipmentId, type: values.type })
   const [selected, setSelected] = useState<number>()
@@ -75,7 +77,7 @@ export default function DistributionMapPage() {
                     title={`${a.code} · ${alertTypeLabel[a.alert_type] ?? a.alert_type}`}
                     d={{
                       time: a.started_at, speed: a.speed_kph, fuelLiter: a.fuel_volume_liter, fuelPercent: a.fuel_percent, segment: a.segment_name,
-                      vessel: a.vessel_status, lat: a.latitude, lon: a.longitude,
+                      vessel: hasVessel(typeOf(a.equipment_id)) ? a.vessel_status : undefined, lat: a.latitude, lon: a.longitude,
                       extra: [{ label: 'Durasi', value: a.ended_at ? formatDuration(minutesBetween(a.started_at, a.ended_at)) : 'masih berlangsung' }],
                     }}
                   />

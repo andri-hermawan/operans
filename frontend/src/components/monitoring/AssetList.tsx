@@ -10,7 +10,7 @@ import { unitImageUrl } from '@/components/map/icons'
 
 import styles from './monitoring.module.css'
 
-export type AssetUnit = LiveState & { code: string }
+export type AssetUnit = LiveState & { code: string; type?: string | null }
 
 interface Props {
   units: AssetUnit[]
@@ -24,7 +24,7 @@ interface Props {
 }
 
 /** Data yang menentukan gambar marker sebuah unit. */
-const markerOf = (u: LiveState) => ({ status: u.equipment_status, vessel: u.vessel_status, alert: u.alert_count > 0, breakdown: !!u.is_breakdown })
+const markerOf = (u: AssetUnit) => ({ type: u.type, status: u.equipment_status, vessel: u.vessel_status, alert: u.alert_count > 0, breakdown: !!u.is_breakdown })
 
 export default function AssetList({ units, selectedId, onSelect, onClear, activity, loading, onRefresh }: Props) {
   if (units.length === 0) return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Tidak ada unit" />
