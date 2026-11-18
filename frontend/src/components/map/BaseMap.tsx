@@ -2,6 +2,8 @@ import { useEffect, useRef, type ReactNode } from 'react'
 import type { ControlPosition, LatLngExpression } from 'leaflet'
 import { LayersControl, MapContainer, TileLayer, useMap } from 'react-leaflet'
 
+import { useOrthoVersions } from '@/hooks/useOrtho'
+import { orthoTileUrl } from '@/services/api/ortho.api'
 import { BASE_LAYERS, DEFAULT_CENTER, DEFAULT_ZOOM } from '@/utils/map'
 
 import { MapHomeContext, type HomeView } from './mapHome'
@@ -33,9 +35,10 @@ function AutoResize({ resizeKey }: { resizeKey?: unknown }) {
   return null
 }
 
-/** Peta dasar semua halaman: pilihan Peta Jalan / Satelit, tombol Reset View & Legend, ukuran mengikuti wadah. */
+/** Peta dasar semua halaman: pilihan Satelit / Peta Jalan / Citra Ortho (bila ada), tombol Reset View & Legend, ukuran mengikuti wadah. */
 export default function BaseMap({ center = DEFAULT_CENTER, zoom = DEFAULT_ZOOM, children, resizeKey, legendPosition }: Props) {
   const homeRef = useRef<HomeView | undefined>(undefined)
+  const { data: ortho = [] } = useOrthoVersions()
   // preferCanvas: ribuan titik riwayat/heatmap tetap ringan
   return (
     <MapHomeContext.Provider value={homeRef}>
@@ -47,6 +50,13 @@ export default function BaseMap({ center = DEFAULT_CENTER, zoom = DEFAULT_ZOOM, 
           <LayersControl.BaseLayer name={BASE_LAYERS.street.name}>
             <TileLayer url={BASE_LAYERS.street.url} attribution={BASE_LAYERS.street.attribution} maxZoom={20} maxNativeZoom={19} />
           </LayersControl.BaseLayer>
+          {/* ortho = lapisan di atas peta dasar (bukan pengganti): area yang tidak tercakup foto tetap menampilkan satelit */}
+          {[...ortho].reverse().map((v, i) => (
+            <LayersControl.Overlay key={v.id} checked={i === 0} name={v.date ? `${v.name} (${v.date})` : v.name}>
+              {/* tile hanya diminta di dalam batas foto; di atas zoom asli, tile terakhir diperbesar */}
+              <TileLayer url={orthoTileUrl(v)} attribution="Citra ortho RMKO" bounds={v.bounds} minZoom={v.min_zoom} maxZoom={24} maxNativeZoom={v.max_zoom} noWrap zIndex={2} />
+            </LayersControl.Overlay>
+          ))}
         </LayersControl>
         <AutoResize resizeKey={resizeKey} />
         <ResetViewButton />

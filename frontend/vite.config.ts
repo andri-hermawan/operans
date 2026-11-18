@@ -1,4 +1,6 @@
 /// <reference types="vitest/config" />
+import { createReadStream, statSync } from 'node:fs'
+import { extname, join, normalize, resolve, sep } from 'node:path'
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig, loadEnv, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
@@ -22,6 +24,40 @@ function trailingSlashBase(base: string): Plugin {
   }
 }
 
+// Citra ortho: tile statis di folder `operans/ortho/tiles` (hasil `gdal raster tile`, tidak masuk Git) disajikan di
+// /ortho/<versi>/{z}/{x}/{y}.webp dan /ortho/index.json. Di produksi Nginx menyajikan folder yang sama (lihat README).
+// Letak folder bisa diganti dengan ORTHO_DIR di .env. Jalur dijaga agar tidak keluar dari folder tile.
+const ORTHO_TYPES: Record<string, string> = { '.webp': 'image/webp', '.png': 'image/png', '.jpg': 'image/jpeg', '.json': 'application/json' }
+function serveOrtho(dir: string): Plugin {
+  const root = resolve(dir)
+  const handle = (req: { url?: string }, res: import('node:http').ServerResponse, next: () => void) => {
+    const url = (req.url ?? '').split('?')[0]
+    if (!url.startsWith('/ortho/')) return next()
+    const file = normalize(join(root, decodeURIComponent(url.slice('/ortho/'.length))))
+    const type = ORTHO_TYPES[extname(file).toLowerCase()]
+    let ok = file.startsWith(root + sep) && !!type
+    if (ok) {
+      try {
+        ok = statSync(file).isFile()
+      } catch {
+        ok = false
+      }
+    }
+    if (!ok) {
+      res.statusCode = 404 // tile di luar area foto memang tidak ada
+      return void res.end()
+    }
+    res.setHeader('Content-Type', type)
+    res.setHeader('Cache-Control', type === 'application/json' ? 'no-cache' : 'public, max-age=86400')
+    createReadStream(file).pipe(res)
+  }
+  return {
+    name: 'serve-ortho',
+    configureServer: (server) => void server.middlewares.use(handle),
+    configurePreviewServer: (server) => void server.middlewares.use(handle),
+  }
+}
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const core = env.CORE_API_URL || 'http://localhost:3346'
@@ -30,7 +66,7 @@ export default defineConfig(({ mode }) => {
   const base = `/${(env.APP_BASE_PATH || '/operans').replace(/^\/+|\/+$/g, '')}/`
   return {
     base, // aplikasi dibuka di http://localhost:PORT/operans/ (API tetap di /core, /iot, /ai)
-    plugins: [react(), trailingSlashBase(base)],
+    plugins: [react(), trailingSlashBase(base), serveOrtho(env.ORTHO_DIR || '../ortho/tiles')],
     resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
     server: {
       host: env.FRONTEND_HOST || '0.0.0.0', // 0.0.0.0 = bisa dibuka dari komputer lain; "localhost" = hanya server ini

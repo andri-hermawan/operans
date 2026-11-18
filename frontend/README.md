@@ -39,7 +39,26 @@ Browser hanya bicara ke Vite (8881). Vite meneruskan:
 | `/core/...` | core-api `http://localhost:3346/...` |
 | `/iot/...` (termasuk WebSocket `/iot/ws/live`) | layanan IoT `http://localhost:3347/...` |
 
-Alamat lain bisa diatur di `.env` (contoh: `.env.example`). Di produksi Nginx melakukan hal yang sama.
+Alamat lain bisa diatur di `.env` (contoh: `.env.example`). Di produksi Nginx melakukan hal yang sama.
+
+### Citra ortho (peta dasar)
+
+Tile ortho dibuat sekali dengan GDAL (`gdal raster tile`, format WEBP) ke folder `operans/ortho/tiles/<versi>/{z}/{x}/{y}.webp`
+(folder ini **tidak masuk Git**), ditambah `operans/ortho/tiles/index.json` (daftar versi, batas, zoom). Vite menyajikannya di
+`/ortho/...` (folder bisa diganti dengan `ORTHO_DIR` di `.env`); layer muncul otomatis di pilihan peta (kiri atas) bila ada versi di
+`index.json`. Ortho baru = folder versi baru (`R2`, ...) + satu entri di `index.json`, tanpa ubah kode. Detail: ADR 0017.
+
+Di produksi, Nginx menyajikan folder yang sama:
+
+```nginx
+location /ortho/ {
+    alias /var/simha/ortho/tiles/;      # salinan operans/ortho/tiles
+    expires 1d;
+    add_header Cache-Control "public";
+    try_files $uri =404;                # tile di luar area foto memang tidak ada
+}
+location = /ortho/index.json { alias /var/simha/ortho/tiles/index.json; add_header Cache-Control "no-cache"; }
+```
 
 ## Peta folder (di mana menaruh apa)
 
