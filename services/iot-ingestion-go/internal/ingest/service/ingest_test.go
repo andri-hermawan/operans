@@ -225,7 +225,7 @@ func (f *fakeStore) CloseAlert(_ context.Context, eq uuid.UUID, typ string, end 
 	return nil, nil
 }
 
-func (f *fakeStore) ExtendAlert(_ context.Context, _ uuid.UUID, typ string, start, end time.Time) (*domain.Alert, error) {
+func (f *fakeStore) ExtendAlert(_ context.Context, _ uuid.UUID, typ string, start, end time.Time, delta *float64) (*domain.Alert, error) {
 	for i := range f.alerts {
 		if f.alerts[i].AlertType == typ && f.alerts[i].StartedAt.Equal(start) {
 			f.alerts[i].EndedAt = &end

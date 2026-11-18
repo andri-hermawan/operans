@@ -96,14 +96,17 @@ func (r *Repository) CloseAlert(ctx context.Context, equipmentID uuid.UUID, aler
 
 // ExtendAlert memperpanjang ended_at alert unit + jenis yang awalnya startedAt (aturan lama: underspeed & FUD
 // diperpanjang selama kondisi masih berlangsung). nil bila tidak ada.
-func (r *Repository) ExtendAlert(ctx context.Context, equipmentID uuid.UUID, alertType string, startedAt, endedAt time.Time) (*domain.Alert, error) {
+//
+// fuelDelta (bila tidak nil) memperbarui fuel_delta_liter = total turun kejadian FUD yang sedang berjalan.
+func (r *Repository) ExtendAlert(ctx context.Context, equipmentID uuid.UUID, alertType string, startedAt, endedAt time.Time, fuelDelta *float64) (*domain.Alert, error) {
 	var a domain.Alert
 	err := r.pool.QueryRow(ctx, `
-		UPDATE iot.alerts SET ended_at = greatest($4, started_at), updated_at = now()
+		UPDATE iot.alerts SET ended_at = greatest($4, started_at), updated_at = now(),
+		       fuel_delta_liter = coalesce($5::numeric, fuel_delta_liter)
 		 WHERE equipment_id = $1 AND alert_type = $2 AND started_at = $3
 		RETURNING id, project_id, equipment_id, device_id, coalesce(telemetry_event_id, 0), alert_type, started_at, ended_at,
 		          operational_date::text, shift_code, threshold_value::float8, operator_name`,
-		equipmentID, alertType, startedAt.UTC(), endedAt.UTC()).Scan(&a.ID, &a.ProjectID, &a.EquipmentID, &a.DeviceID,
+		equipmentID, alertType, startedAt.UTC(), endedAt.UTC(), fuelDelta).Scan(&a.ID, &a.ProjectID, &a.EquipmentID, &a.DeviceID,
 		&a.TelemetryEventID, &a.AlertType, &a.StartedAt, &a.EndedAt, &a.OperationalDate, &a.ShiftCode, &a.ThresholdValue, &a.OperatorName)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil

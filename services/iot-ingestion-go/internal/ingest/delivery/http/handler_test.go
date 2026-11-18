@@ -94,6 +94,6 @@ func (m *memStore) CloseAlert(context.Context, uuid.UUID, string, time.Time) (*d
 	return nil, nil
 }
 
-func (m *memStore) ExtendAlert(context.Context, uuid.UUID, string, time.Time, time.Time) (*domain.Alert, error) {
+func (m *memStore) ExtendAlert(context.Context, uuid.UUID, string, time.Time, time.Time, *float64) (*domain.Alert, error) {
 	return nil, nil
 }

@@ -2,7 +2,6 @@ package domain
 
 import (
 	"fmt"
-	"math"
 	"time"
 )
 
@@ -16,9 +15,17 @@ type Tracker struct {
 	// Unit berhenti (speed 0, mesin apa pun) — rangkaian yang SAMA dengan sistem lama (findStopStreakStart):
 	// dipakai isi BBM & fuel_decrease_engine_on
 	StopSince      *time.Time `json:"stop_since,omitempty"`
-	StopStartLiter *float64   `json:"stop_start_liter,omitempty"` // liter awal berhenti (acuan FUD)
+	StopStartLiter *float64   `json:"stop_start_liter,omitempty"` // liter awal berhenti (tidak lagi dipakai FUD sejak ADR 0016)
 	StopMinLiter   *float64   `json:"stop_min_liter,omitempty"`   // liter terendah selama berhenti (isi BBM)
-	FUDOpen        bool       `json:"fud_open,omitempty"`         // alert FUD rangkaian berhenti ini sudah dibuat
+
+	// fuel_decrease_engine_on (ADR 0016): riwayat bacaan selama berhenti + mesin hidup, awal jendela setelah
+	// fluktuasi, dan kejadian penurunan yang sedang berjalan
+	FuelBuf  []FuelPoint `json:"fuel_buf,omitempty"`
+	WinFrom  *time.Time  `json:"win_from,omitempty"`  // jendela dihitung dari bacaan SESUDAH waktu ini
+	FUDOpen  bool        `json:"fud_open,omitempty"`  // alert FUD kejadian ini sudah dibuat
+	FUDStart *time.Time  `json:"fud_start,omitempty"` // awal alert (kunci perpanjangan)
+	FUDBase  float64     `json:"fud_base,omitempty"`  // liter patokan awal kejadian (untuk total turun)
+	FUDLast  *time.Time  `json:"fud_last,omitempty"`  // bacaan terakhir yang masih memenuhi syarat
 
 	// Mesin mati: fuel_decrease_engine_off
 	OffSince      *time.Time `json:"off_since,omitempty"`
@@ -54,11 +61,9 @@ type FuelOutcome struct {
 // waktu periode tetap berjalan, tetapi tidak ada penilaian). Aturan:
 //   - isi BBM (konsep baru, ADR 0009): selama berhenti, naik ≥ 10 L dari liter terendah → increase
 //   - fuel_decrease_engine_off (konsep baru): liter saat mesin mati − liter saat hidup lagi ≥ fuel_drop_liters
-//   - fuel_decrease_engine_on = SISTEM LAMA (keputusan 2026-10-26): data ini mesin hidup, berhenti, dan liter
-//     turun; turun kumulatif sejak AWAL BERHENTI (speed 0, mesin hidup/mati) ≥ fuel_drop_liters (dibulatkan
-//     1 desimal seperti lama) dan lama berhenti ≥ duration_minutes → alert (awal = awal berhenti, akhir = data
-//     ini); data berikutnya yang masih memenuhi → akhir alert diperpanjang. Data yang sudah memicu
-//     fuel_decrease_engine_off tidak dinilai FUD (urutan lama).
+//   - fuel_decrease_engine_on (ADR 0016, menggantikan aturan lama 2026-10-26): median turun ≥ fuel_drop_liters
+//     dalam jendela duration_minutes saat mesin hidup & berhenti, dengan waktu tenang dan reset bila sensor
+//     bergoyang — rincian di fuel_decrease.go. Data yang sudah memicu fuel_decrease_engine_off tidak dinilai FUD.
 //   - naik/turun saat bergerak tidak dinilai
 func DetectFuel(t Tracker, e *Event, liters *float64, rules AlertRules) (Tracker, []FuelOutcome) {
 	now := e.EventTime
@@ -69,7 +74,8 @@ func DetectFuel(t Tracker, e *Event, liters *float64, rules AlertRules) (Tracker
 	// rangkaian berhenti + isi BBM
 	if stopped {
 		if t.StopSince == nil {
-			t.StopSince, t.StopStartLiter, t.StopMinLiter, t.FUDOpen = &now, nil, nil, false
+			t.StopSince, t.StopStartLiter, t.StopMinLiter = &now, nil, nil
+			resetFUD(&t)
 		}
 		if liters != nil {
 			if t.StopStartLiter == nil {
@@ -86,7 +92,8 @@ func DetectFuel(t Tracker, e *Event, liters *float64, rules AlertRules) (Tracker
 			}
 		}
 	} else {
-		t.StopSince, t.StopStartLiter, t.StopMinLiter, t.FUDOpen = nil, nil, nil, false
+		t.StopSince, t.StopStartLiter, t.StopMinLiter = nil, nil, nil
+		resetFUD(&t)
 	}
 
 	// fuel turun selama mesin mati (dinilai saat mesin hidup lagi)
@@ -111,23 +118,10 @@ func DetectFuel(t Tracker, e *Event, liters *float64, rules AlertRules) (Tracker
 		t.OffSince, t.OffStartLiter = nil, nil
 	}
 
-	// fuel turun saat mesin hidup & berhenti (aturan lama)
-	r := rules[AlertFuelDecreaseEngineOn]
-	if !fuo && engineOn && stopped && liters != nil && t.StopStartLiter != nil && r.FuelDropLiters != nil &&
-		e.FuelDeltaLiter != nil && *e.FuelDeltaLiter < 0 {
-		cum := *liters - *t.StopStartLiter
-		if math.Round(cum*10)/10 <= -*r.FuelDropLiters && now.Sub(*t.StopSince) >= minutes(r.DurationMinutes) {
-			o := FuelOutcome{StartedAt: *t.StopSince, AlertType: AlertFuelDecreaseEngineOn, Threshold: *r.FuelDropLiters,
-				DeltaLiter: round2(cum)}
-			if t.FUDOpen {
-				o.Extend = true
-			} else {
-				o.EventType = "decrease"
-				o.Description = fmt.Sprintf("fuel turun %.2f L saat mesin hidup & berhenti", -cum)
-				t.FUDOpen = true
-			}
-			out = append(out, o)
-		}
+	// fuel turun saat mesin hidup & berhenti (ADR 0016, lihat fuel_decrease.go). Data yang sudah memicu
+	// fuel_decrease_engine_off tidak dinilai FUD (urutan lama), tetapi riwayat bacaannya tetap dicatat.
+	if fo := detectFUD(&t, e, liters, rules[AlertFuelDecreaseEngineOn], stopped, engineOn); fo != nil && !fuo {
+		out = append(out, *fo)
 	}
 	return t, out
 }

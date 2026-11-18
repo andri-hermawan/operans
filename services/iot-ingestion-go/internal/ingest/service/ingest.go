@@ -35,7 +35,7 @@ type Store interface {
 	InsertGeofenceEvent(ctx context.Context, g *domain.GeofenceEvent) error
 	InsertAlert(ctx context.Context, a *domain.Alert) error
 	CloseAlert(ctx context.Context, equipmentID uuid.UUID, alertType string, endedAt time.Time) (*domain.Alert, error)
-	ExtendAlert(ctx context.Context, equipmentID uuid.UUID, alertType string, startedAt, endedAt time.Time) (*domain.Alert, error)
+	ExtendAlert(ctx context.Context, equipmentID uuid.UUID, alertType string, startedAt, endedAt time.Time, fuelDelta *float64) (*domain.Alert, error)
 	InsertFuelEvent(ctx context.Context, f *domain.FuelEvent) error
 }
 
@@ -247,7 +247,7 @@ func (s *Ingest) durationAlerts(ctx context.Context, owner domain.Owner, e *doma
 	for _, o := range outs {
 		switch o.Action {
 		case domain.AlertExtend:
-			if a := s.extendAlert(ctx, owner, o.AlertType, o.StartedAt, *o.EndedAt); a != nil {
+			if a := s.extendAlert(ctx, owner, o.AlertType, o.StartedAt, *o.EndedAt, nil); a != nil {
 				alerts = append(alerts, *a)
 			}
 		case domain.AlertOpen:
@@ -291,7 +291,8 @@ func (s *Ingest) fuelEvents(ctx context.Context, owner domain.Owner, e *domain.E
 	snap := domain.SnapshotOf(e)
 	for _, o := range outs {
 		if o.Extend { // alert FUD yang sama, fuel masih turun: perpanjang akhirnya (aturan lama)
-			if a := s.extendAlert(ctx, owner, o.AlertType, o.StartedAt, e.EventTime); a != nil {
+			delta := o.DeltaLiter // total turun kejadian ini ikut diperbarui
+			if a := s.extendAlert(ctx, owner, o.AlertType, o.StartedAt, e.EventTime, &delta); a != nil {
 				alerts = append(alerts, *a)
 			}
 			continue
@@ -299,11 +300,16 @@ func (s *Ingest) fuelEvents(ctx context.Context, owner domain.Owner, e *domain.E
 		var alertID *int64
 		if o.AlertType != "" {
 			end, threshold := e.EventTime, o.Threshold
-			// selisih fuel di alert = selisih data pemicu (sama dengan lama); kumulatif ada di fuel_events
+			// selisih fuel di alert FUD = TOTAL turun kejadian (ADR 0016); FUO = turun selama mesin mati
+			asnap := snap
+			if o.AlertType == domain.AlertFuelDecreaseEngineOn || o.AlertType == domain.AlertFuelDecreaseEngineOff {
+				d := o.DeltaLiter
+				asnap.FuelDeltaLiter = &d
+			}
 			a := domain.Alert{ProjectID: owner.ProjectID, EquipmentID: owner.EquipmentID, DeviceID: owner.DeviceID,
 				TelemetryEventID: telemetryID, AlertType: o.AlertType, StartedAt: o.StartedAt, EndedAt: &end,
 				OperationalDate: e.OperationalDate, ShiftCode: e.ShiftCode, ThresholdValue: &threshold,
-				Snapshot: snap, OperatorName: e.OperatorName, Recipients: rules[o.AlertType].Recipients}
+				Snapshot: asnap, OperatorName: e.OperatorName, Recipients: rules[o.AlertType].Recipients}
 			if err := s.repo.InsertAlert(ctx, &a); err != nil {
 				slog.Error("simpan alert fuel gagal", "equipment_id", owner.EquipmentID, "jenis", o.AlertType, "err", err)
 			} else {
@@ -328,8 +334,8 @@ func (s *Ingest) fuelEvents(ctx context.Context, owner domain.Owner, e *domain.E
 }
 
 // extendAlert memperpanjang ended_at alert (unit + jenis + awal sama) dan menyiarkannya.
-func (s *Ingest) extendAlert(ctx context.Context, owner domain.Owner, alertType string, startedAt, endedAt time.Time) *domain.Alert {
-	a, err := s.repo.ExtendAlert(ctx, owner.EquipmentID, alertType, startedAt, endedAt)
+func (s *Ingest) extendAlert(ctx context.Context, owner domain.Owner, alertType string, startedAt, endedAt time.Time, fuelDelta *float64) *domain.Alert {
+	a, err := s.repo.ExtendAlert(ctx, owner.EquipmentID, alertType, startedAt, endedAt, fuelDelta)
 	if err != nil {
 		slog.Error("perpanjang alert gagal", "equipment_id", owner.EquipmentID, "jenis", alertType, "err", err)
 		return nil

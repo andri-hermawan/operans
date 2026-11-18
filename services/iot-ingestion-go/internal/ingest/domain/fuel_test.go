@@ -74,20 +74,6 @@ func TestDetectFuel(t *testing.T) {
 			t.Fatalf("%+v", out)
 		}
 	})
-	t.Run("FUD (aturan lama): turun >= 5 L sejak awal berhenti & >= 2 menit → alert, lalu diperpanjang", func(t *testing.T) {
-		out := runFuel([]fuelStep{{0, 0, true, 100}, {1, 0, true, 94}, {2, 0, true, 93}, {3, 0, true, 85}, {4, 30, true, 85}})
-		t0 := time.Date(2026, 10, 23, 8, 0, 0, 0, time.UTC)
-		if len(out) != 2 || out[0].AlertType != AlertFuelDecreaseEngineOn || out[0].Extend || out[0].DeltaLiter != -7 ||
-			!out[0].StartedAt.Equal(t0) || !out[1].Extend || out[1].EventType != "" {
-			t.Fatalf("%+v", out)
-		}
-	})
-	t.Run("FUD (aturan lama): awal berhenti dihitung walau mesin sempat mati (kasus 07:26:30 replay)", func(t *testing.T) {
-		out := runFuel([]fuelStep{{0, 0, true, 100}, {1, 0, false, 100}, {5, 0, false, 100}, {6, 0, true, 100}, {7, 0, true, 94}})
-		if len(out) != 1 || out[0].AlertType != AlertFuelDecreaseEngineOn || !out[0].StartedAt.Equal(time.Date(2026, 10, 23, 8, 0, 0, 0, time.UTC)) {
-			t.Fatalf("%+v", out)
-		}
-	})
 	t.Run("turun cepat tapi belum 2 menit lalu jalan → tanpa alert", func(t *testing.T) {
 		out := runFuel([]fuelStep{{0, 0, true, 100}, {1, 0, true, 90}, {1, 40, true, 90}})
 		if len(out) != 0 {
