@@ -47,6 +47,7 @@ export default function AlertList({ types, title = 'Abnormal Alerts' }: { types?
     col.code('code', 'Asset ID', { fixed: 'left' }),
     col.plainDate('operational_date', 'Date'),
     col.text('shift_name', 'Shift'),
+    col.text('operator_name', 'Operator'),
     col.time('started_at', 'Start Time'),
     { ...col.time<AlertListRow>('ended_at', 'Stop Time'), render: (r) => (r.ended_at ? formatTime(r.ended_at) : <Tag color="processing">berlangsung</Tag>) },
     col.number('duration', 'Duration (menit)', 2),

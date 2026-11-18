@@ -20,3 +20,8 @@ Thumbs.db
 
 # Dokumentasi internal (tidak ikut repository)
 /docs/
+
+# Ortho / citra peta (file besar, bukan kode)
+/ortho/
+*.tif
+*.tiff
