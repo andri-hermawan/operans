@@ -8,6 +8,8 @@ import type { MenuEntry } from '@/types/route.types'
 import { useVisibleMenu } from '@/hooks/useVisibleMenu'
 import { groupKeysTo, isGroup } from '@/utils/menu'
 import logo from '@/assets/logo.png'
+import rmko from '@/assets/rmko/RMKO.png'
+import rmkoMark from '@/assets/rmko/RMKO_logo.png'
 
 import styles from '../layout.module.css'
 
@@ -22,7 +24,28 @@ function Brand({ collapsed }: { collapsed: boolean }) {
   return (
     <div className={styles.brand} style={{ justifyContent: collapsed ? 'center' : 'flex-start' }}>
       <img src={logo} alt="RMKO" className={styles.brandLogo} />
-      {!collapsed && <span className={styles.brandText}>OPERANS</span>}
+      {!collapsed && (
+        <span className={styles.brandTitle}>
+          <span className={styles.brandText}>OPERANS</span>
+          <span className={styles.brandBy}>by RMKO</span>
+        </span>
+      )}
+    </div>
+  )
+}
+
+/** Identitas perusahaan di dasar menu — tampil di semua halaman (ikon saja bila menu diciutkan). */
+function Credit({ collapsed }: { collapsed: boolean }) {
+  return (
+    <div className={styles.credit} title="PT Royaltama Mulia Kontraktorindo Tbk">
+      {collapsed ? (
+        <img src={rmkoMark} alt="RMKO" className={styles.creditMark} />
+      ) : (
+        <>
+          <img src={rmko} alt="RMKO" className={styles.creditLogo} />
+          <span className={styles.creditName}>PT Royaltama Mulia Kontraktorindo Tbk</span>
+        </>
+      )}
     </div>
   )
 }
@@ -37,9 +60,10 @@ export default function Sidebar({ isMobile }: { isMobile: boolean }) {
   const items = useMemo(() => menu.map(toItem), [menu])
   const openKeys = useMemo(() => groupKeysTo(menu, pathname), [menu, pathname])
 
+  const compact = collapsed && !isMobile
   const content = (
-    <>
-      <Brand collapsed={collapsed && !isMobile} />
+    <div className={styles.siderInner}>
+      <Brand collapsed={compact} />
       <Menu
         mode="inline"
         className={styles.menu}
@@ -51,7 +75,8 @@ export default function Sidebar({ isMobile }: { isMobile: boolean }) {
           if (isMobile) setCollapsed(true)
         }}
       />
-    </>
+      <Credit collapsed={compact} />
+    </div>
   )
 
   // HP: menu sebagai laci dari kiri, menutup sendiri setelah memilih halaman.

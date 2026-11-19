@@ -30,6 +30,57 @@
   width: auto;
 }
 
+.siderInner {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.siderInner > :global(.ant-menu) {
+  flex: 1;
+}
+
+.brandTitle {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.brandBy {
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: var(--operans-muted);
+}
+
+/* identitas perusahaan di dasar sidebar */
+.credit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 12px;
+  text-align: center;
+  border-top: 1px solid var(--operans-border);
+  background: linear-gradient(180deg, transparent, rgb(8 58 104 / 0.05));
+}
+
+.creditLogo {
+  height: 34px;
+  width: auto;
+}
+
+.creditMark {
+  height: 28px;
+  width: auto;
+}
+
+.creditName {
+  font-size: 10.5px;
+  line-height: 1.35;
+  color: var(--operans-muted);
+}
+
 .brandText {
   color: var(--operans-primary-dark);
   font-weight: 700;

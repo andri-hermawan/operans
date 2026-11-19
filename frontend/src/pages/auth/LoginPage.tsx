@@ -8,8 +8,11 @@ import { useAuthStore } from '@/stores/auth.store'
 import type { LoginForm } from '@/types/auth.types'
 import { HOME } from '@/router/routes'
 import logo from '@/assets/logo.png'
+import rmkoWhite from '@/assets/rmko/RMKO_White.png'
 
 import styles from './login.module.css'
+
+const FEATURES = ['Live Tracking', 'Geofencing', 'Abnormal Alerts', 'Abnormal Distribution Map', 'Position History', 'Fuel History', 'Speed Heatmap']
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -37,31 +40,50 @@ export default function LoginPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.card}>
-        <div className={styles.logo}>
-          <img src={logo} alt="RMKO" height={84} />
-          <h1 className={styles.company}>Operation Management System</h1>
-          <Typography.Text type="secondary">Mining | Hauling | Emplacement</Typography.Text>
+      <aside className={styles.brand}>
+        <img src={rmkoWhite} alt="RMKO" className={styles.brandLogo} />
+        <div className={styles.brandBody}>
+          <h1 className={styles.title}>OPERANS</h1>
+          <p className={styles.by}>
+            <span>by</span> PT Royaltama Mulia Kontraktorindo Tbk
+          </p>
+          <p className={styles.tagline}>Operation Management System</p>
+          <p className={styles.scope}>Mining | Hauling | Emplacement</p>
+          <ul className={styles.chips}>
+            {FEATURES.map((f) => (
+              <li key={f}>{f}</li>
+            ))}
+          </ul>
         </div>
+      </aside>
 
-        {error && <Alert type="error" title={error} showIcon className={styles.error} />}
+      <main className={styles.panel}>
+        <div className={styles.card}>
+          <div className={styles.logo}>
+            <img src={logo} alt="OPERANS" className={styles.mark} />
+            <h2 className={styles.heading}>Selamat datang</h2>
+            <Typography.Text type="secondary">Masuk untuk melanjutkan ke OPERANS</Typography.Text>
+          </div>
 
-        <Form<LoginForm> layout="vertical" size="large" requiredMark={false} onFinish={submit} disabled={loading}>
-          <Form.Item name="email" label="Email" rules={[{ required: true, message: 'Email wajib diisi' }, { type: 'email', message: 'Format email tidak valid' }]}>
-            <Input prefix={<Mail size={16} />} placeholder="nama@perusahaan.com" autoComplete="email" autoFocus />
-          </Form.Item>
-          <Form.Item name="password" label="Password" rules={[{ required: true, message: 'Password wajib diisi' }]}>
-            <Input.Password prefix={<Lock size={16} />} placeholder="••••••••" autoComplete="current-password" />
-          </Form.Item>
-          <Button type="primary" htmlType="submit" block loading={loading} className={styles.submit}>
-            {loading ? 'Memproses...' : 'Masuk'}
-          </Button>
-        </Form>
+          {error && <Alert type="error" title={error} showIcon className={styles.error} />}
 
-        <Typography.Text type="secondary" className={styles.footer}>
-          PT Royaltama Mulia Kontraktorindo Tbk © {new Date().getFullYear()}
-        </Typography.Text>
-      </div>
+          <Form<LoginForm> layout="vertical" size="large" requiredMark={false} onFinish={submit} disabled={loading}>
+            <Form.Item name="email" label="Email" rules={[{ required: true, message: 'Email wajib diisi' }, { type: 'email', message: 'Format email tidak valid' }]}>
+              <Input prefix={<Mail size={16} />} placeholder="nama@perusahaan.com" autoComplete="email" autoFocus />
+            </Form.Item>
+            <Form.Item name="password" label="Password" rules={[{ required: true, message: 'Password wajib diisi' }]}>
+              <Input.Password prefix={<Lock size={16} />} placeholder="••••••••" autoComplete="current-password" />
+            </Form.Item>
+            <Button type="primary" htmlType="submit" block loading={loading} className={styles.submit}>
+              {loading ? 'Memproses...' : 'Masuk'}
+            </Button>
+          </Form>
+
+          <div className={styles.footer}>
+            <Typography.Text type="secondary">OPERANS by RMKO © {new Date().getFullYear()}</Typography.Text>
+          </div>
+        </div>
+      </main>
     </div>
   )
 }
