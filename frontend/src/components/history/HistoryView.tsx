@@ -20,6 +20,7 @@ import { alertTypeLabel, brand, equipmentStatusColor } from '@/utils/colors'
 import { formatNumber, formatPercent, formatTime } from '@/utils/format'
 import { toLocal } from '@/utils/time'
 import Chart from '@/components/chart/Chart'
+import HaulCycleSummary from '@/components/history/HaulCycleSummary'
 import SlotFilters from '@/components/filters/SlotFilters'
 import BaseMap, { FlyTo } from '@/components/map/BaseMap'
 import { unitIcon } from '@/components/map/icons'
@@ -113,6 +114,9 @@ export default function HistoryView({ mode }: { mode: HistoryMode }) {
   const panel = (
     <>
       <SlotFilters values={values} onChange={set} />
+      {ready && mode === 'position' && hasVessel(type) && (
+        <HaulCycleSummary rows={rows} code={code} date={slot.date} shiftCode={slot.shift} loading={points.isFetching} onSelect={(i) => { setIdx(i); setPlaying(false); setFly((n) => n + 1) }} />
+      )}
       <ListHeader title={title} count={rows.length} />
       {ready && points.data?.truncated && <Typography.Text type="warning">Data dipotong — persempit dengan memilih shift.</Typography.Text>}
       <div className={`${styles.list} ${styles.listBox}`} ref={listRef}>
