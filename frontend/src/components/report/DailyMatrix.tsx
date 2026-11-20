@@ -29,10 +29,13 @@ import PageHeader from '@/components/ui/PageHeader'
 import BackToReports from './BackToReports'
 import ReportMatrix from './ReportMatrix'
 
+/** Unit mitra (kode diawali DT8) tidak ikut Ritase, Payload, dan Production. */
+const PARTNER_PREFIX = 'DT8'
+
 const CONFIG: Record<DailyMatrixKind, DailyMatrixConfig> = {
-  ritase: { title: 'Ritase Daily', source: 'weighbridge', uom: (s) => (s ? 'rit/shift' : 'rit/day'), value: ritase, digits: 0, total: { title: 'Total', fn: totals.sum }, style: () => ritaseStyle },
-  payload: { title: 'Payload Daily', source: 'weighbridge', uom: () => 'ton/rit', value: payload, digits: 2, total: { title: 'Average', fn: totals.avgPositive }, style: () => undefined },
-  production: { title: 'Production Daily', source: 'weighbridge', uom: () => 'ton', value: production, digits: 2, total: { title: 'Total', fn: totals.sum }, style: () => productionStyle },
+  ritase: { excludeCodePrefix: PARTNER_PREFIX, title: 'Ritase Daily', source: 'weighbridge', uom: (s) => (s ? 'rit/shift' : 'rit/day'), value: ritase, digits: 0, total: { title: 'Total', fn: totals.sum }, style: () => ritaseStyle },
+  payload: { excludeCodePrefix: PARTNER_PREFIX, title: 'Payload Daily', source: 'weighbridge', uom: () => 'ton/rit', value: payload, digits: 2, total: { title: 'Average', fn: totals.avgPositive }, style: () => undefined },
+  production: { excludeCodePrefix: PARTNER_PREFIX, title: 'Production Daily', source: 'weighbridge', uom: () => 'ton', value: production, digits: 2, total: { title: 'Total', fn: totals.sum }, style: () => productionStyle },
   breakdown: { title: 'Breakdown Daily', source: 'breakdown', uom: () => 'hours', value: breakdownHours, digits: 2, total: { title: 'Total', fn: totals.sum }, style: (s) => breakdownStyle(hoursAvailable(s)) },
   pa: {
     title: 'Physical Availability (PA) Daily',
@@ -63,7 +66,7 @@ export default function DailyMatrix({ kind }: { kind: DailyMatrixKind }) {
   const days = useMemo(() => (f.from && f.to ? daysBetween(f.from, f.to) : []), [f.from, f.to])
   const rows = useMemo<MatrixRow[]>(() => {
     const units = byUnit(q.data ?? [], c.value)
-    return [...units.entries()].map(([code, perDay]) => {
+    return [...units.entries()].filter(([code]) => !c.excludeCodePrefix || !code.startsWith(c.excludeCodePrefix)).map(([code, perDay]) => {
       const values = c.derive ? c.derive(perDay, days, f.shift) : perDay
       const list = days.map((d) => values[d] ?? 0)
       return { code, values, total: c.total.fn(list) }

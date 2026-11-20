@@ -68,6 +68,8 @@ export interface DailyMatrixConfig {
   digits: number
   total: { title: string; fn: (vs: number[]) => number }
   style: (shift?: string) => MatrixRowStyle
+  /** Unit yang kodenya diawali ini tidak ditampilkan (mis. unit mitra "DT8"). */
+  excludeCodePrefix?: string
   /** PA: nilai per hari dihitung dari jam breakdown (hari tanpa data tetap dihitung). */
   derive?: (perDay: Record<string, number>, days: string[], shift?: string) => Record<string, number>
 }
