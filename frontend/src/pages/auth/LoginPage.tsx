@@ -6,7 +6,6 @@ import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { errorMessage } from '@/services/http/ApiError'
 import { useAuthStore } from '@/stores/auth.store'
 import type { LoginForm } from '@/types/auth.types'
-import { HOME } from '@/router/routes'
 import logo from '@/assets/logo.png'
 import rmkoWhite from '@/assets/rmko/RMKO_White.png'
 
@@ -21,7 +20,7 @@ export default function LoginPage() {
   const login = useAuthStore((s) => s.login)
   const [error, setError] = useState<string>()
   const [loading, setLoading] = useState(false)
-  const from = (location.state as { from?: string } | null)?.from ?? HOME
+  const from = (location.state as { from?: string } | null)?.from ?? '/'
 
   if (status === 'signedIn') return <Navigate to={from} replace />
 

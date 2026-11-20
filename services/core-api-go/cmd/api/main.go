@@ -18,6 +18,7 @@
 //	importexcel     → dailyinput.Loader + operator, activation, breakdown, weighbridge (pengurai baris Excel)
 //	maparea         → project
 //	alertrule       → project, alerttype, maparea (nama zona)
+//	pagerule        → tidak memakai fitur lain (hak akses halaman & laporan per project)
 //	reportschedule  → shift, token (halaman cetak PDF)
 //	company, reference, alerttype, report → tidak memakai fitur lain
 package main
@@ -72,6 +73,9 @@ import (
 	operatorhttp "simha/core-api/internal/operator/delivery/http"
 	operatorrepo "simha/core-api/internal/operator/repository"
 	operatorsvc "simha/core-api/internal/operator/service"
+	pagerulehttp "simha/core-api/internal/pagerule/delivery/http"
+	pagerulerepo "simha/core-api/internal/pagerule/repository"
+	pagerulesvc "simha/core-api/internal/pagerule/service"
 	projecthttp "simha/core-api/internal/project/delivery/http"
 	projectrepo "simha/core-api/internal/project/repository"
 	projectsvc "simha/core-api/internal/project/service"
@@ -212,6 +216,7 @@ func run() error {
 
 	mapAreaService := mapareasvc.New(maparearepo.New(pool), projectService)
 	alertTypeService := alerttypesvc.New(alerttyperepo.New(pool))
+	pageRuleService := pagerulesvc.New(pagerulerepo.New(pool))
 	alertRuleService := alertrulesvc.New(alertrulerepo.New(pool), projectService, alertTypeService, mapAreaService)
 	reportService := reportsvc.New(reportrepo.New(pool))
 	rc := cfg.Reports
@@ -229,6 +234,8 @@ func run() error {
 
 	// API data — semua butuh access token; hak akses (superadmin / admin project) dicek di service
 	api := r.Group("/api/v1", middleware.RequireAccess(signer))
+	pageRuleHandler := pagerulehttp.New(pageRuleService)
+	api.Use(pageRuleHandler.Guard()) // hak akses halaman untuk data Report & Record / Upload (ADR 0018)
 	userhttp.New(userService).Register(api)
 	companyhttp.New(companyService).Register(api)
 	projecthttp.New(projectService).Register(api)
@@ -253,6 +260,7 @@ func run() error {
 	fuelcalibrationhttp.New(fuelCalibrationService).Register(api)
 	alerttypehttp.New(alertTypeService).Register(api)
 	alertrulehttp.New(alertRuleService).Register(api)
+	pageRuleHandler.Register(api)
 
 	srv := &http.Server{
 		Addr:              cfg.HTTPAddr,

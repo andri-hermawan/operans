@@ -121,7 +121,7 @@ func (s *Service) pdf(ctx context.Context, sc domain.ReportSchedule, date string
 		return nil, errors.New("jadwal tanpa pembuat; simpan ulang jadwal")
 	}
 	pid := sc.ProjectID
-	token, _, err := s.tokens.IssueAccess(token.AccessSubject{UserID: *owner, Name: "Report Schedule", ProjectID: &pid, ProjectRole: access.RoleViewer})
+	token, _, err := s.tokens.IssueAccess(token.AccessSubject{UserID: *owner, Name: "Report Schedule", ProjectID: &pid, ProjectRole: access.RoleViewer, Internal: true})
 	if err != nil {
 		return nil, err
 	}

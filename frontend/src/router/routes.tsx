@@ -33,6 +33,7 @@ import {
   RadioReceiver,
   Boxes,
   Scale,
+  ShieldCheck,
   Sliders,
   SquareUser,
   Truck,
@@ -43,6 +44,7 @@ import {
 import type { Resource } from '@/types/auth.types'
 import type { MenuEntry, Page, PageRoute } from '@/types/route.types'
 import { pagesOf } from '@/utils/menu'
+import { pageKey } from '@/utils/permissions'
 
 
 const ic = (C: ComponentType<{ size?: number }>) => <C size={18} />
@@ -110,19 +112,20 @@ export const MENU: MenuEntry[] = [
       { path: '/master/alert-category', title: 'Alert Category', icon: ic(OctagonAlert), resource: 'master', ...page(() => import('@/pages/master/alert-category/AlertCategoryPage')) },
       { path: '/master/alert-rule', title: 'Alert Rule', icon: ic(BellRing), resource: 'master', ...page(() => import('@/pages/master/alert-rule/AlertRulePage')) },
       { path: '/master/report-schedule', title: 'Report Schedule', icon: ic(CalendarClock), resource: 'master', ...page(() => import('@/pages/master/report-schedule/ReportSchedulePage')) },
+      { path: '/master/access', title: 'Hak Akses', icon: ic(ShieldCheck), resource: 'access', ...page(() => import('@/pages/master/access/AccessPage')) },
     ],
   },
 ]
 
 /** Halaman di luar menu. */
-const hidden = (path: string, title: string, resource: Resource, p: { page: Page }): PageRoute => ({ path, title, resource, menu: false, ...p })
+const hidden = (path: string, title: string, resource: Resource, p: { page: Page }, accessKey?: string | false): PageRoute => ({ path, title, resource, menu: false, accessKey, ...p })
 const EXTRA: PageRoute[] = [
-  hidden('/profile', 'Profil Saya', 'monitoring', page(() => import('@/pages/profile/ProfilePage'))),
+  hidden('/profile', 'Profil Saya', 'monitoring', page(() => import('@/pages/profile/ProfilePage')), false), // selalu terbuka
   // alert per jenis (FMS lama: route ada, menu disembunyikan)
-  hidden('/fuel-alert', 'Fuel Alert', 'monitoring', page(() => import('@/pages/alert/fuel/FuelAlertPage'))),
-  hidden('/overspeed', 'Overspeed Alert', 'monitoring', page(() => import('@/pages/alert/overspeed/OverspeedAlertPage'))),
-  hidden('/underspeed', 'Underspeed Alert', 'monitoring', page(() => import('@/pages/alert/underspeed/UnderspeedAlertPage'))),
-  hidden('/offtrack', 'Off Track Alert', 'monitoring', page(() => import('@/pages/alert/off-track/OffTrackAlertPage'))),
+  hidden('/fuel-alert', 'Fuel Alert', 'monitoring', page(() => import('@/pages/alert/fuel/FuelAlertPage')), 'alert'),
+  hidden('/overspeed', 'Overspeed Alert', 'monitoring', page(() => import('@/pages/alert/overspeed/OverspeedAlertPage')), 'alert'),
+  hidden('/underspeed', 'Underspeed Alert', 'monitoring', page(() => import('@/pages/alert/underspeed/UnderspeedAlertPage')), 'alert'),
+  hidden('/offtrack', 'Off Track Alert', 'monitoring', page(() => import('@/pages/alert/off-track/OffTrackAlertPage')), 'alert'),
   hidden('/graphic', 'Equipment Graphic', 'monitoring', page(() => import('@/pages/graphic/GraphicPage'))),
   // laporan (dibuka dari halaman Report)
   hidden('/report/report-alert-summary', 'Alert Summary', 'report', page(() => import('@/pages/report/report-alert-summary/ReportAlertSummaryPage'))),
@@ -145,3 +148,6 @@ export const ROUTES: PageRoute[] = [...MENU.flatMap(pagesOf), ...EXTRA]
 export const HOME = '/tracking'
 
 export const routeOf = (pathname: string): PageRoute | undefined => ROUTES.find((r) => r.path === pathname)
+
+/** Kunci pengaturan hak akses halaman ini (false = tidak bisa dibatasi). */
+export const accessKeyOf = (r: PageRoute): string | false => (r.accessKey === undefined ? pageKey(r.path) : r.accessKey)

@@ -52,4 +52,4 @@ export interface PasswordForm {
 }
 
 /** Kelompok sumber data untuk hak akses (tabelnya di utils/permissions.ts). */
-export type Resource = 'monitoring' | 'report' | 'daily' | 'master' | 'organization' | 'documents'
+export type Resource = 'monitoring' | 'report' | 'daily' | 'master' | 'organization' | 'documents' | 'access'

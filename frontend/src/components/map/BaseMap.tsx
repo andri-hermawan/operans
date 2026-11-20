@@ -50,11 +50,12 @@ export default function BaseMap({ center = DEFAULT_CENTER, zoom = DEFAULT_ZOOM, 
           <LayersControl.BaseLayer name={BASE_LAYERS.street.name}>
             <TileLayer url={BASE_LAYERS.street.url} attribution={BASE_LAYERS.street.attribution} maxZoom={20} maxNativeZoom={19} />
           </LayersControl.BaseLayer>
-          {/* ortho = lapisan di atas peta dasar (bukan pengganti): area yang tidak tercakup foto tetap menampilkan satelit */}
-          {[...ortho].reverse().map((v, i) => (
-            <LayersControl.Overlay key={v.id} checked={i === 0} name={v.date ? `${v.name} (${v.date})` : v.name}>
+          {/* ortho = lapisan di atas peta dasar (bukan pengganti): area yang tidak tercakup foto tetap menampilkan satelit.
+              Semua versi menyala bersamaan; urutan di index.json = urutan tumpukan (yang terakhir paling atas). "default": false mematikannya. */}
+          {ortho.map((v, i) => (
+            <LayersControl.Overlay key={v.id} checked={v.default !== false} name={v.date ? `${v.name} (${v.date})` : v.name}>
               {/* tile hanya diminta di dalam batas foto; di atas zoom asli, tile terakhir diperbesar */}
-              <TileLayer url={orthoTileUrl(v)} attribution="Citra ortho RMKO" bounds={v.bounds} minZoom={v.min_zoom} maxZoom={24} maxNativeZoom={v.max_zoom} noWrap zIndex={2} />
+              <TileLayer url={orthoTileUrl(v)} attribution="Citra ortho RMKO" bounds={v.bounds} minZoom={v.min_zoom} maxZoom={24} maxNativeZoom={v.max_zoom} noWrap zIndex={2 + i} />
             </LayersControl.Overlay>
           ))}
         </LayersControl>

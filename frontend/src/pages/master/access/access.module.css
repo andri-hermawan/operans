@@ -1,0 +1,45 @@
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.hint {
+  font-size: 12.5px;
+  color: var(--operans-muted);
+}
+
+.group {
+  margin-bottom: 12px;
+}
+
+.key {
+  margin-left: 6px;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--operans-muted);
+}
+
+/* kotak yang berbeda dari aturan bawaan */
+.changed {
+  display: inline-flex;
+  padding: 4px 6px;
+  border-radius: 6px;
+  background: #fff4d6;
+  box-shadow: 0 0 0 1px #f0a500;
+}
+
+.footnote {
+  margin-top: 4px;
+}
+
+.projectBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}

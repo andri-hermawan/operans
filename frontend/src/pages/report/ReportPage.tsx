@@ -22,6 +22,8 @@ import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/auth.store'
 import type { ReportMenuItem } from '@/types/report.types'
 import { brand } from '@/utils/colors'
+import { canOpenPage } from '@/utils/permissions'
+import { accessKeyOf, routeOf } from '@/router/routes'
 import PageHeader from '@/components/ui/PageHeader'
 
 const ic = (C: typeof Truck) => <C size={26} color={brand.primary} />
@@ -62,14 +64,20 @@ const GROUPS: { title: string; items: ReportMenuItem[] }[] = [
 export default function ReportHub() {
   const navigate = useNavigate()
   const role = useAuthStore((s) => s.role)
+  const access = useAuthStore((s) => s.access)
   const [q, setQ] = useState('')
   const term = q.trim().toLowerCase()
+  // laporan yang dibatasi superadmin untuk user ini tidak ditampilkan
+  const openable = (path: string) => {
+    const r = routeOf(path)
+    return !r || canOpenPage(role, r.resource, accessKeyOf(r), access)
+  }
 
   return (
     <>
       <PageHeader title="Report" extra={<Input allowClear prefix={<Search size={14} />} placeholder="Cari laporan…" value={q} onChange={(e) => setQ(e.target.value)} style={{ width: 240 }} />} />
       {GROUPS.map((g) => {
-        const items = g.items.filter((i) => (!i.roles || (role && i.roles.includes(role))) && `${i.title} ${i.desc}`.toLowerCase().includes(term))
+        const items = g.items.filter((i) => (!i.roles || (role && i.roles.includes(role))) && openable(i.path) && `${i.title} ${i.desc}`.toLowerCase().includes(term))
         if (!items.length) return null
         return (
           <div key={g.title} style={{ marginBottom: 20 }}>

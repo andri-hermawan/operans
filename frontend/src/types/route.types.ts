@@ -15,6 +15,8 @@ export interface PageRoute {
   page?: Page
   /** false = tidak tampil di menu (mis. halaman detail). */
   menu?: boolean
+  /** Kunci pengaturan hak akses halaman. Bawaan: alamat tanpa "/" di depan. String = ikut kunci halaman lain; false = tidak bisa dibatasi. */
+  accessKey?: string | false
 }
 
 export interface MenuGroup {

@@ -26,7 +26,7 @@ const maxJSONBody = 8 * 1024 // permintaan login/refresh kecil (batas yang sama 
 // Catatan: role di token berlaku sampai token habis (maks. 15 menit) walau role diubah di database.
 func ActorFrom(c *gin.Context) access.Actor {
 	cl := c.MustGet(middleware.ClaimsKey).(*token.AccessClaims)
-	a := access.Actor{Role: cl.ProjectRole, SuperAdmin: cl.SuperAdmin}
+	a := access.Actor{Role: cl.ProjectRole, SuperAdmin: cl.SuperAdmin, Internal: cl.Internal}
 	a.UserID, _ = uuid.Parse(cl.Subject)
 	if pid, err := uuid.Parse(cl.ProjectID); err == nil {
 		a.ProjectID = &pid

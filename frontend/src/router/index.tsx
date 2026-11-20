@@ -1,5 +1,5 @@
 import { Result } from 'antd'
-import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router-dom'
 
 import type { PageRoute } from '@/types/route.types'
 import RouteError from '@/components/feedback/RouteError'
@@ -10,7 +10,8 @@ import { RequireAuth } from '@/router/guards/AuthGuard'
 import { RequireAccess } from '@/router/guards/RoleGuard'
 import LoginPage from '@/pages/auth/LoginPage'
 
-import { HOME, ROUTES } from './routes'
+import { HomeRedirect } from './HomeRedirect'
+import { ROUTES } from './routes'
 
 const element = (r: PageRoute) => {
   const Page = r.page
@@ -32,7 +33,7 @@ export const router = createBrowserRouter([
     ),
     errorElement: <RouteError />,
     children: [
-      { index: true, element: <Navigate to={HOME} replace /> },
+      { index: true, element: <HomeRedirect /> },
       ...ROUTES.map((r) => ({ path: r.path.slice(1), element: element(r) })),
       { path: '*', element: <Result status="404" title="Halaman tidak ditemukan" /> },
     ],

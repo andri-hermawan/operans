@@ -31,6 +31,7 @@ type Actor struct {
 	ProjectID  *uuid.UUID // project aktif
 	Role       string     // role di project aktif
 	SuperAdmin bool
+	Internal   bool // token layanan (cetak PDF terjadwal): tidak terkena pengaturan hak akses halaman
 }
 
 // CanManageProject: superadmin boleh semua project; admin hanya project aktifnya (data induk, user).

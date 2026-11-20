@@ -25,6 +25,8 @@ type AccessClaims struct {
 	ProjectID   string `json:"pid,omitempty"`   // project aktif (kosong: superadmin tanpa project)
 	ProjectRole string `json:"prole,omitempty"` // admin | dispatcher | viewer
 	SuperAdmin  bool   `json:"sa"`
+	// Internal = token layanan (mis. cetak PDF terjadwal): tidak terkena pengaturan hak akses halaman (ADR 0018).
+	Internal bool `json:"int,omitempty"`
 	jwt.RegisteredClaims
 }
 
@@ -74,6 +76,7 @@ type AccessSubject struct {
 	ProjectID   *uuid.UUID
 	ProjectRole string
 	SuperAdmin  bool
+	Internal    bool
 }
 
 // IssueAccess membuat access token baru (umur pendek, bawaan 15 menit).
@@ -81,7 +84,7 @@ func (s *Signer) IssueAccess(sub AccessSubject) (token string, expiresAt time.Ti
 	now := s.now()
 	expiresAt = now.Add(s.accessTTL)
 	claims := AccessClaims{
-		Type: "access", Name: sub.Name, ProjectRole: sub.ProjectRole, SuperAdmin: sub.SuperAdmin,
+		Type: "access", Name: sub.Name, ProjectRole: sub.ProjectRole, SuperAdmin: sub.SuperAdmin, Internal: sub.Internal,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    s.issuer,
 			Audience:  jwt.ClaimStrings{s.audience},
