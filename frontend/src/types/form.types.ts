@@ -14,6 +14,8 @@ export type OptionSource =
   | 'shifts' // value = shift_code
   | 'equipmentCodes' // value = equipment_code (unit aktif)
   | 'equipmentIds' // value = id
+  | 'equipmentWithoutDevice' // value = id; hanya unit yang belum ada di tabel Device (+ unit yang sedang dipilih)
+  | 'equipmentWithoutCalibration' // value = id; hanya unit yang belum ada di tabel Fuel Calibration (+ unit yang sedang dipilih)
   | { reference: string } // core.reference_values group (breakdown_category, repair_status)
   | { key: string; load: (projectId: string) => Promise<Option[]> } // sumber lain milik halaman (di-cache per project)
 

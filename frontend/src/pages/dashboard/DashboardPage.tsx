@@ -1,7 +1,8 @@
 // Dashboard — satu shift diceritakan lewat kartu dan grafik, berurutan: kondisi armada → produksi → waktu kerja →
 // breakdown → pergerakan & BBM → alert → rincian per unit. Semua mengikuti filter Tanggal + Shift.
+import { useState } from 'react'
 import { Col, Row, Tag } from 'antd'
-import { Activity, Clock, Fuel, Gauge, MapPin, Package, Radio, WifiOff, Route, Scale, ShieldCheck, Timer, Truck, TriangleAlert, Users, Wrench } from 'lucide-react'
+import { Activity, Clock, Fuel, Gauge, MapPin, Package, Radio, Unplug, WifiOff, Route, Scale, ShieldCheck, Timer, Truck, TriangleAlert, Users, Wrench } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import { useDashboardData } from '@/hooks/useDashboardData'
@@ -17,6 +18,7 @@ import { AlertByHourChart, AlertByTypeChart } from './components/AlertCharts'
 import BreakdownFeed from './components/BreakdownFeed'
 import Chapter from './components/Chapter'
 import FleetByType from './components/FleetByType'
+import UnitListModal from './components/UnitListModal'
 import RecentAlerts from './components/RecentAlerts'
 import TimeUsageChart from './components/TimeUsageChart'
 import UnitPerformanceTable from './components/UnitPerformanceTable'
@@ -26,16 +28,27 @@ import styles from './dashboard.module.css'
 const LIVE_TEXT = { connecting: 'Menyambung…', live: 'Live', offline: 'Terputus' } as const
 const n = (v: number, d = 0) => formatNumber(v, d)
 
+/** Daftar unit yang dibuka dari kartu Kondisi armada. Tiga pertama = kondisi live saat ini (tidak mengikuti tanggal/shift). */
+const LISTS = [
+  { key: 'monitored', title: 'Total Asset', description: 'Semua asset yang punya kondisi live. Status = kondisi terakhir yang diterima; tidak mengikuti filter tanggal dan shift.', empty: 'Belum ada asset terpantau' },
+  { key: 'online', title: 'Asset Online', description: 'Asset yang kondisi live-nya bukan offline (Running, Idle, atau Stop). Tidak mengikuti filter tanggal dan shift.', empty: 'Tidak ada asset online' },
+  { key: 'offline', title: 'Asset Offline', description: 'Asset yang kondisi live-nya offline: sinyal GSM hilang atau tidak mengirim data beberapa menit. Tidak mengikuti filter tanggal dan shift.', empty: 'Tidak ada asset offline' },
+  { key: 'noData', title: 'Asset Not Connected', description: 'Asset aktif yang tidak mengirim satu pun data ke server pada tanggal dan shift ini. Status = kondisi terakhir yang diketahui.', empty: 'Semua asset aktif mengirim data pada tanggal dan shift ini' },
+] as const
+
 export default function DashboardPage() {
   const liveStatus = useLiveSocket()
   const navigate = useNavigate()
   const { values, set, slot } = useSlotFilters()
   const d = useDashboardData(slot)
   const { kpi } = d
+  // daftar unit yang sedang dibuka dari kartu Kondisi armada
+  const [openList, setOpenList] = useState<'monitored' | 'online' | 'offline' | 'noData' | null>(null)
 
   const shiftText = d.shift ? `${d.shift.shift_name} (${d.shift.start_time}–${d.shift.end_time})` : 'Semua shift'
   const paColor = kpi.pa >= 90 ? brand.success : kpi.pa >= 75 ? brand.warning : brand.danger
   const paTone = kpi.pa >= 90 ? 'good' : kpi.pa >= 75 ? 'warn' : 'bad'
+  const slotLabel = `${dayjs(slot.date).format('dddd, D MMMM YYYY')} · ${shiftText}`
   const bdUnits = d.rows.filter((r) => r.breakdown > 0).length
   const topAlert = [...d.alertByType].sort((a, b) => b.count - a.count)[0]
 
@@ -58,22 +71,40 @@ export default function DashboardPage() {
         no={1}
         title="Kondisi armada saat ini"
         stats={[
-          { icon: Truck, label: 'Unit terpantau', value: n(kpi.units) },
-          { icon: Radio, label: 'Online', value: n(kpi.online), color: brand.info },
-          { icon: WifiOff, label: 'Offline', value: n(kpi.offline), color: equipmentStatusColor.offline },
+          { icon: Truck, label: 'Total Asset', value: n(kpi.units), onClick: () => setOpenList('monitored') },
+          { icon: Radio, label: 'Online', value: n(kpi.online), color: brand.info, onClick: () => setOpenList('online') },
+          { icon: WifiOff, label: 'Offline', value: n(kpi.offline), color: equipmentStatusColor.offline, onClick: () => setOpenList('offline') },
+          {
+            icon: Unplug,
+            label: 'Not Connected',
+            value: d.noTelemetryReady ? n(d.noTelemetry.length) : '…',
+            color: d.noTelemetry.length ? brand.warning : brand.muted,
+            onClick: () => setOpenList('noData'),
+          },
         ]}
       >
         <FleetByType rows={d.byType} />
+        {LISTS.map((l) => (
+          <UnitListModal
+            key={l.key}
+            open={openList === l.key}
+            onClose={() => setOpenList(null)}
+            title={l.title}
+            description={l.key === 'noData' ? `${slotLabel}. ${l.description}` : l.description}
+            units={l.key === 'noData' ? d.noTelemetry : d.unitLists[l.key]}
+            emptyText={l.empty}
+          />
+        ))}
       </Chapter>
 
       <Chapter
         no={2}
-        title="Produksi (unit sendiri)"
+        title="Produksi"
         stats={[
           { icon: Package, label: 'Ritase', value: n(kpi.ritase), unit: 'rit', color: brand.info },
           { icon: Scale, label: 'Produksi', value: n(kpi.tonnes, 1), unit: 'ton', color: brand.success },
           { icon: Gauge, label: 'Payload rata-rata', value: n(kpi.payload, 1), unit: 'ton/rit', color: brand.accent },
-          { icon: Users, label: 'Unit berproduksi', value: n(d.ownRows.filter((r) => r.ritase > 0).length) },
+          { icon: Users, label: 'Asset berproduksi', value: n(d.ownRows.filter((r) => r.ritase > 0).length) },
         ]}
       >
         <UnitProductionChart rows={d.ownRows} />
@@ -99,7 +130,7 @@ export default function DashboardPage() {
         tone={bdUnits ? 'bad' : 'good'}
         stats={[
           { icon: Wrench, label: 'Jam breakdown', value: n(kpi.breakdownHours, 1), unit: 'jam', color: equipmentStatusColor.breakdown },
-          { icon: Truck, label: 'Unit terdampak', value: n(bdUnits), color: bdUnits ? brand.danger : undefined },
+          { icon: Truck, label: 'Asset terdampak', value: n(bdUnits), color: bdUnits ? brand.danger : undefined },
           { icon: TriangleAlert, label: 'Kejadian', value: n(d.breakdowns.filter((b) => b.status !== 'ready').length), color: brand.warning },
         ]}
       >
@@ -146,7 +177,7 @@ export default function DashboardPage() {
         </Row>
       </Chapter>
 
-      <Chapter no={7} title="Rincian per unit">
+      <Chapter no={7} title="Rincian per asset">
         <UnitPerformanceTable rows={d.rows} loading={d.loading} />
       </Chapter>
     </div>

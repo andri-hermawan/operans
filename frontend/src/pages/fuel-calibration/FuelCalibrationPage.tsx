@@ -25,7 +25,7 @@ const fuelCalibrationConfig: CrudConfig<FuelCalibration> = {
   ],
   form: {
     fields: [
-      { name: 'equipment_id', label: 'Equipment', type: 'select', options: 'equipmentIds', required: true, disabled: (_v, m) => m === 'edit' },
+      { name: 'equipment_id', label: 'Equipment', type: 'select', options: 'equipmentWithoutCalibration', required: true, help: 'Hanya unit yang belum punya kalibrasi (saat tambah)', disabled: (_v, m) => m === 'edit' },
       { name: 'calibration_type', label: 'Type', type: 'radio', required: true, initial: 'lls', options: [{ value: 'lls', label: 'LLS' }, { value: 'percentage', label: 'Percentage' }] },
       { name: 'tank_capacity_liters', label: 'Max Fuel Volume', type: 'number', unit: 'L', min: 1, required: true },
       { name: 'max_sensor_value', label: 'Max Fuel Level (nilai sensor)', type: 'number', min: 1, required: true, visible: (v) => v.calibration_type !== 'percentage' },

@@ -12,7 +12,7 @@ const STATUSES = ['running', 'idle', 'stop', 'breakdown'] as const
 const ICON: Record<string, LucideIcon> = { 'Dump Truck': Truck, 'Water Truck': Droplets, 'Fuel Truck': Fuel }
 
 export default function FleetByType({ rows }: { rows: FleetTypeRow[] }) {
-  if (!rows.some((r) => r.total)) return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Belum ada data unit" />
+  if (!rows.some((r) => r.total)) return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Belum ada data asset" />
   return (
     <div className={styles.typeGrid}>
       {rows.map((r) => {
@@ -22,7 +22,7 @@ export default function FleetByType({ rows }: { rows: FleetTypeRow[] }) {
             <div className={styles.typeHead}>
               <span className={styles.typeIcon}><Icon size={18} /></span>
               <span className={styles.typeName}>{r.type}</span>
-              <span className={styles.typeTotal}>{r.total} unit · {r.online} online</span>
+              <span className={styles.typeTotal}>{r.total} asset · {r.online} online</span>
             </div>
             <div className={styles.statusBar}>
               {STATUSES.filter((k) => r[k]).map((k) => (

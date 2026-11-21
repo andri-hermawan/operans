@@ -36,7 +36,7 @@ const deviceConfig: CrudConfig<Device> = {
     fields: [
       { name: 'imei', label: 'IMEI', required: true, rules: [{ pattern: /^\d{15}$/, message: 'IMEI 15 digit angka' }], disabled: (_v, m) => m === 'edit' },
       { name: 'name', label: 'Device Name' },
-      { name: 'equipment_id', label: 'Equipment', type: 'select', options: 'equipmentIds', help: 'Kosongkan untuk melepas alat dari unit' },
+      { name: 'equipment_id', label: 'Equipment', type: 'select', options: 'equipmentWithoutDevice', help: 'Hanya unit yang belum terpasang alat. Kosongkan untuk melepas alat dari unit' },
       { name: 'model', label: 'Model', type: 'select', options: MODELS },
       { name: 'fuel_source', label: 'Sumber fuel', type: 'select', options: FUEL_SOURCES },
       { name: 'provider_name', label: 'Provider SIM' },

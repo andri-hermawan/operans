@@ -54,6 +54,18 @@
   background: #fafbfc;
 }
 
+.statClickable {
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+.statClickable:hover,
+.statClickable:focus-visible {
+  outline: none;
+  border-color: var(--operans-primary);
+  box-shadow: 0 3px 10px rgb(8 58 104 / 0.12);
+  transform: translateY(-1px);
+}
+
 .statIcon {
   display: grid;
   place-items: center;

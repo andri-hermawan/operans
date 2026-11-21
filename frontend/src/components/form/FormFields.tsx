@@ -9,7 +9,7 @@ import { useOptions } from '@/hooks/useOptions'
 
 // Form.Item menyuntikkan value/onChange (atau checked untuk switch) ke komponen ini → harus diteruskan ke input.
 function Control({ f, disabled, ...inject }: { f: FieldDef; disabled: boolean } & Record<string, unknown>) {
-  const { options, loading } = useOptions(f.options)
+  const { options, loading } = useOptions(f.options, typeof inject.value === 'string' ? inject.value : undefined)
   const common = { disabled, placeholder: f.placeholder, style: { width: '100%' }, ...inject }
   switch (f.type ?? 'text') {
     case 'upper':

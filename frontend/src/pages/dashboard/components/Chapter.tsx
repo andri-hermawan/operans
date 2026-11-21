@@ -14,6 +14,8 @@ export interface Stat {
   icon: LucideIcon
   /** warna ikon + angka */
   color?: string
+  /** Bila diisi, kartu bisa diklik (mis. membuka daftar rincian). */
+  onClick?: () => void
 }
 
 interface Props {
@@ -36,10 +38,14 @@ export default function Chapter({ no, title, tone = 'neutral', stats, children }
       </header>
       {stats && stats.length > 0 && (
         <div className={styles.statGrid}>
-          {stats.map(({ icon: Icon, ...s }) => {
+          {stats.map(({ icon: Icon, onClick, ...s }) => {
             const color = s.color ?? brand.primary
             return (
-              <div key={s.label} className={styles.stat}>
+              <div
+                key={s.label}
+                className={onClick ? `${styles.stat} ${styles.statClickable}` : styles.stat}
+                {...(onClick ? { role: 'button', tabIndex: 0, onClick, onKeyDown: (e: React.KeyboardEvent) => (e.key === 'Enter' || e.key === ' ') && onClick() } : {})}
+              >
                 <span className={styles.statIcon} style={{ background: `${color}1f`, color }}>
                   <Icon size={20} />
                 </span>

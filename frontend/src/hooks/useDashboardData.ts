@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import type { AlertHourRow, DashboardKpi, DashboardUnitRow, TimeUsage } from '@/types/dashboard.types'
+import type { AlertHourRow, DashboardKpi, DashboardUnitRow, UnitListItem, TimeUsage } from '@/types/dashboard.types'
 import type { Slot } from '@/types/telemetry.types'
 import { alertTypeLabel } from '@/utils/colors'
 import { pa as availability } from '@/utils/reports'
@@ -67,6 +67,43 @@ export function useDashboardData(slot: Slot) {
     }
     return [...m.values()]
   }, [states, equipments])
+
+  /**
+   * Unit aktif yang tidak ada di telemetry_events pada tanggal + shift ini: aktivitas dihitung dari telemetry_events,
+   * jadi unit tanpa baris aktivitas = tidak punya satu pun data. Status = kondisi live terakhir yang diketahui.
+   */
+  const noTelemetry = useMemo<UnitListItem[]>(() => {
+    if (!activity.isSuccess) return []
+    const seen = new Set((activity.data?.data ?? []).map((a) => a.equipment_id))
+    const stateOf = new Map(states.map((s) => [s.equipment_id, s]))
+    return equipments
+      .filter((e) => e.is_active && !seen.has(e.id))
+      .map((e) => {
+        const s = stateOf.get(e.id)
+        return { id: e.id, code: e.equipment_code, type: e.equipment_type, status: s ? (s.is_breakdown ? 'breakdown' : (s.equipment_status ?? 'offline')) : null, lastEventAt: s?.event_time ?? null }
+      })
+      .sort((a, b) => a.code.localeCompare(b.code))
+  }, [activity.isSuccess, activity.data, equipments, states])
+
+  /** Daftar unit di balik angka Unit terpantau / Online / Offline (kondisi live saat ini, sama dengan dasar hitung KPI). */
+  const unitLists = useMemo(() => {
+    const info = new Map(equipments.map((e) => [e.id, e]))
+    const all: UnitListItem[] = states.map((s) => ({
+      id: s.equipment_id,
+      code: codeOf(s.equipment_id),
+      type: info.get(s.equipment_id)?.equipment_type ?? null,
+      status: s.is_breakdown ? 'breakdown' : (s.equipment_status ?? 'offline'),
+      lastEventAt: s.event_time,
+    }))
+    all.sort((a, b) => a.code.localeCompare(b.code))
+    const stateOnline = new Set(states.filter((s) => s.equipment_status && s.equipment_status !== 'offline').map((s) => s.equipment_id))
+    return {
+      monitored: all,
+      // sama dengan KPI: online = equipment_status bukan offline (breakdown tidak mengubah hitungan ini)
+      online: all.filter((u) => stateOnline.has(u.id)),
+      offline: all.filter((u) => !stateOnline.has(u.id)),
+    }
+  }, [states, equipments, codeOf])
 
   const alertList = useMemo(() => alerts.data?.data ?? [], [alerts.data])
 
@@ -152,6 +189,9 @@ export function useDashboardData(slot: Slot) {
     byStatus,
     byType,
     kpi,
+    noTelemetry,
+    unitLists,
+    noTelemetryReady: activity.isSuccess,
     rows,
     ownRows,
     timeUsage,

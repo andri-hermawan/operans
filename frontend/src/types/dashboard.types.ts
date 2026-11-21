@@ -4,6 +4,17 @@ import type { ShiftPerformanceRow } from './report.types'
 /** Baris ringkasan satu unit: kinerja shift + status live + Physical Availability. */
 export type DashboardUnitRow = ShiftPerformanceRow & { status: string; pa: number }
 
+/** Satu baris daftar unit di Dashboard (Total Asset, Online, Offline, Not Connected). */
+export interface UnitListItem {
+  id: string
+  code: string
+  type: string | null
+  /** Status live terakhir: running | idle | stop | offline | breakdown; null = belum pernah terpantau. */
+  status: string | null
+  /** Waktu data terakhir yang pernah diterima (live), bila ada. */
+  lastEventAt: string | null
+}
+
 export interface DashboardKpi {
   units: number
   online: number
