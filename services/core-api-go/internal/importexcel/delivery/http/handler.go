@@ -36,7 +36,7 @@ func (h *Handler) Template(c *gin.Context) {
 		"operator-assignments": "setting_operator", "equipment-activations": "equipment_activation",
 		"equipment-breakdowns": "breakdown_status", "weighbridge-tickets": "weighbridge",
 		"stock-emplacements": "stock_emplacement", "yearly-plans": "plan_yearly", "monthly-plans": "plan_monthly",
-		"time-sheets": "time_sheet", "ritases": "ritase", "work-hour-notifications": "wh_notification", "rain-slippery-logs": "rain_slippery",
+		"time-sheets": "time_sheet", "fuel-fillings": "fuel_filling", "ritases": "ritase", "work-hour-notifications": "wh_notification", "rain-slippery-logs": "rain_slippery",
 	}[typ] + ".xlsx"
 	c.Header("Content-Disposition", `attachment; filename="`+name+`"`)
 	c.Data(http.StatusOK, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", b)

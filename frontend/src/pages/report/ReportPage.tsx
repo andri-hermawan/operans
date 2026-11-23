@@ -34,6 +34,7 @@ const GROUPS: { title: string; items: ReportMenuItem[] }[] = [
     items: [
       { path: '/report/report-equipment-logs', title: 'Asset History', desc: 'Data mentah alat per tanggal & shift', icon: ic(History) },
       { path: '/report/report-fuel-history', title: 'Fuel History', desc: 'Kejadian isi & turun BBM per periode', icon: ic(Fuel) },
+      { path: '/report/report-breakdown-history', title: 'Breakdown History', desc: 'Catatan breakdown per periode', icon: ic(Wrench) },
       { path: '/alert', title: 'Abnormal Alert History', desc: 'Semua alert per periode', icon: ic(AlertTriangle) },
       { path: '/report/playback-unit-history', title: 'Playback Unit History', desc: 'Putar ulang rute unit', icon: ic(PlayCircle) },
       { path: '/graphic', title: 'Equipment Graphic', desc: 'Availability unit & grafik speed/fuel', icon: ic(ChartNoAxesCombined) },

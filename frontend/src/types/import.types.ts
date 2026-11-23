@@ -10,6 +10,7 @@ export type ImportType =
   | 'yearly-plans'
   | 'monthly-plans'
   | 'time-sheets'
+  | 'fuel-fillings'
   | 'ritases'
   | 'work-hour-notifications'
   | 'rain-slippery-logs'

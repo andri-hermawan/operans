@@ -49,6 +49,7 @@ var uploadPages = map[string]string{
 	"weighbridge-tickets":     "upload/weighbridge",
 	"stock-emplacements":      "upload/stock-emplacement",
 	"time-sheets":             "upload/time-sheet",
+	"fuel-fillings":           "upload/fuel-filling",
 	"ritases":                 "upload/ritase",
 	"work-hour-notifications": "upload/wh-notification",
 	"rain-slippery-logs":      "upload/rain-slippery",
@@ -88,6 +89,9 @@ func KeysFor(path string) []string {
 		}
 		return nil
 	default:
+		if seg[0] == "equipment-breakdowns" { // juga dibaca Report → Breakdown History
+			return []string{"upload/status-breakdown", "report/report-breakdown-history"}
+		}
 		if k, ok := uploadPages[seg[0]]; ok {
 			return []string{k}
 		}

@@ -97,6 +97,27 @@ export interface TimeSheet {
   remark: string | null
 }
 
+/** Fuel Filling: pengisian BBM unit per tanggal + shift (HM dalam jam, BBM dalam liter). */
+export interface FuelFilling {
+  id: number
+  operational_date: string
+  shift_code: string
+  shift_name: string
+  equipment_code: string
+  equipment_model: string | null
+  hm_previous: number | null
+  hm_filling: number | null
+  total_hours: number | null
+  fuel_usage_liter: number | null
+  fuel_consumption_lph: number | null
+  waste_removal_liter: number | null
+  coal_mining_liter: number | null
+  hauling_liter: number | null
+  rental_liter: number | null
+  dewatering_liter: number | null
+  final_support_liter: number | null
+}
+
 /** Ritase: hasil angkut per jam kerja (loader + hauler, lokasi, material, produksi). */
 export interface Ritase {
   id: number

@@ -105,6 +105,9 @@ import (
 	stockhttp "simha/core-api/internal/stockemplacement/delivery/http"
 	stockrepo "simha/core-api/internal/stockemplacement/repository"
 	stocksvc "simha/core-api/internal/stockemplacement/service"
+	fuelfillinghttp "simha/core-api/internal/fuelfilling/delivery/http"
+	fuelfillingrepo "simha/core-api/internal/fuelfilling/repository"
+	fuelfillingsvc "simha/core-api/internal/fuelfilling/service"
 	timesheethttp "simha/core-api/internal/timesheet/delivery/http"
 	timesheetrepo "simha/core-api/internal/timesheet/repository"
 	timesheetsvc "simha/core-api/internal/timesheet/service"
@@ -194,6 +197,7 @@ func run() error {
 	weighbridgeService := weighbridgesvc.New(weighbridgerepo.New(pool), daily)
 	stockService := stocksvc.New(stockrepo.New(pool), daily)
 	timeSheetService := timesheetsvc.New(timesheetrepo.New(pool), daily)
+	fuelFillingService := fuelfillingsvc.New(fuelfillingrepo.New(pool), daily)
 	ritaseService := ritasesvc.New(ritaserepo.New(pool), daily)
 	workHourService := workhoursvc.New(workhourrepo.New(pool), daily)
 	rainSlipperyService := rainslipperysvc.New(rainslipperyrepo.New(pool), daily)
@@ -209,6 +213,7 @@ func run() error {
 		"yearly-plans":            yearlyPlanService,
 		"monthly-plans":           monthlyPlanService,
 		"time-sheets":             timeSheetService,
+		"fuel-fillings":           fuelFillingService,
 		"ritases":                 ritaseService,
 		"work-hour-notifications": workHourService,
 		"rain-slippery-logs":      rainSlipperyService,
@@ -252,6 +257,7 @@ func run() error {
 	yearlyplanhttp.New(yearlyPlanService).Register(api)
 	monthlyplanhttp.New(monthlyPlanService).Register(api)
 	timesheethttp.New(timeSheetService).Register(api)
+	fuelfillinghttp.New(fuelFillingService).Register(api)
 	ritasehttp.New(ritaseService).Register(api)
 	workhourhttp.New(workHourService).Register(api)
 	rainslipperyhttp.New(rainSlipperyService).Register(api)
