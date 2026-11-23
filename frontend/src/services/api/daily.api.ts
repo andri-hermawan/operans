@@ -36,7 +36,15 @@ export const breakdownApi = {
 }
 export const ticketApi = dailyApi<WeighbridgeTicket>('/api/v1/weighbridge-tickets')
 export const timeSheetApi = dailyApi<TimeSheet>('/api/v1/time-sheets')
-export const fuelFillingApi = dailyApi<FuelFilling>('/api/v1/fuel-fillings')
+const fuelFilling = dailyApi<FuelFilling>('/api/v1/fuel-fillings')
+export const fuelFillingApi = {
+  ...fuelFilling,
+  /** Rentang tanggal operasional (+ shift dan kode asset bila diisi) — untuk Report → Fuel Filling. */
+  range: async (p: { projectId: string; from?: string; to?: string; shiftId?: string; equipmentCode?: string }) =>
+    (await core.get<ListResponse<FuelFilling>>('/api/v1/fuel-fillings', {
+      params: { project_id: p.projectId, date_from: p.from, date_to: p.to, shift_id: p.shiftId, equipment_code: p.equipmentCode },
+    })).data,
+}
 export const ritaseApi = dailyApi<Ritase>('/api/v1/ritases')
 export const workHourApi = dailyApi<WorkHourNotification>('/api/v1/work-hour-notifications')
 export const rainSlipperyApi = dailyApi<RainSlipperyLog>('/api/v1/rain-slippery-logs')

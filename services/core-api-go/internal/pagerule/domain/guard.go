@@ -92,6 +92,9 @@ func KeysFor(path string) []string {
 		if seg[0] == "equipment-breakdowns" { // juga dibaca Report → Breakdown History
 			return []string{"upload/status-breakdown", "report/report-breakdown-history"}
 		}
+		if seg[0] == "fuel-fillings" { // juga dibaca Report → Fuel Filling
+			return []string{"upload/fuel-filling", "report/report-fuel-filling"}
+		}
 		if k, ok := uploadPages[seg[0]]; ok {
 			return []string{k}
 		}

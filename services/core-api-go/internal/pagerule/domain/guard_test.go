@@ -11,7 +11,7 @@ func TestKeysFor(t *testing.T) {
 		"/api/v1/weighbridge-tickets/123":         {"upload/weighbridge"},
 		"/api/v1/rain-slippery-logs":              {"upload/rain-slippery"},
 		"/api/v1/imports/ritases/template":        {"upload/ritase"},
-		"/api/v1/fuel-fillings":                   {"upload/fuel-filling"},
+		"/api/v1/fuel-fillings":                   {"upload/fuel-filling", "report/report-fuel-filling"},
 		"/api/v1/imports/fuel-fillings":           {"upload/fuel-filling"},
 		"/api/v1/imports/work-hour-notifications": {"upload/wh-notification"},
 		"/api/v1/reports/executive-hauling":       {"report/report-executive-hauling"},
