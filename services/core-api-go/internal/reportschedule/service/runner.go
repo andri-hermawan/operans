@@ -163,8 +163,8 @@ func (s *Service) run(ctx context.Context, sc domain.ReportSchedule, trigger, re
 		if sc.ShiftCode != nil {
 			shift = *sc.ShiftCode
 		}
-		subject := fmt.Sprintf("[SIMHA] %s %s (%s)", label, reportDate, shift)
-		html := fmt.Sprintf("<p>Terlampir laporan <b>%s</b> tanggal operasional <b>%s</b> (%s).</p><p>Email otomatis dari jadwal \"%s\" — SIMHA.</p>",
+		subject := fmt.Sprintf("[OPERANS] %s %s (%s)", label, reportDate, shift)
+		html := fmt.Sprintf("<p>Terlampir laporan <b>%s</b> tanggal operasional <b>%s</b> (%s).</p><p>Email otomatis dari jadwal \"%s\" — OPERANS.</p>",
 			label, reportDate, shift, sc.Name)
 		return s.send(to, subject, html, fileName(sc, reportDate), pdf)
 	}()

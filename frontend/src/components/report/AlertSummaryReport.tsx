@@ -1,5 +1,5 @@
 // Isi laporan Alert Summary — dipakai halaman laporan DAN halaman cetak PDF (jadwal laporan).
-// Susunan sama dengan sistem lama: kartu ringkasan per kategori (Empty / Loaded), lokasi kejadian per segmen,
+// Susunan sama dengan sistem lama: kartu ringkasan per kategori, lokasi kejadian per segmen,
 // lalu frekuensi kejadian dan jumlah unit per jam untuk tiap kategori.
 import { useMemo } from 'react'
 import { Alert, Col, Empty, Row } from 'antd'
@@ -50,11 +50,7 @@ export default function AlertSummaryReport({ alerts, shift, shifts, animate = tr
 
   const cards = CATEGORIES.map((c) => {
     const list = alerts.filter((a) => c.types.includes(a.alert_type))
-    const side = (v: string) => {
-      const l = list.filter((a) => a.vessel_status === v)
-      return { events: l.length, units: new Set(l.map((a) => a.equipment_id)).size }
-    }
-    return { ...c, total: list.length, units: new Set(list.map((a) => a.equipment_id)).size, empty: side('empty'), loaded: side('loaded') }
+    return { ...c, total: list.length, units: new Set(list.map((a) => a.equipment_id)).size }
   })
 
   // semua zona di peta (meski tanpa alert) + "Di luar jalur" bila ada alert di luar zona; diurutkan agar yang terbanyak di atas
@@ -143,19 +139,6 @@ export default function AlertSummaryReport({ alerts, shift, shifts, animate = tr
                   <span style={{ fontSize: 12, fontWeight: 500, color: '#64748b', marginLeft: 4 }}>event · {c.units} DT</span>
                 </div>
               </div>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 12 }}>
-              {[
-                { label: 'Empty', v: c.empty },
-                { label: 'Loaded', v: c.loaded },
-              ].map(({ label, v }) => (
-                <div key={label} style={{ background: `${c.color}14`, borderRadius: 8, padding: '8px 10px' }}>
-                  <div style={{ fontSize: 11, color: '#64748b', fontWeight: 600 }}>{label}</div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: '#1f2937' }}>
-                    {v.events} <span style={{ fontWeight: 500, fontSize: 12 }}>event</span> · {v.units} <span style={{ fontWeight: 500, fontSize: 12 }}>DT</span>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         ))}
