@@ -50,7 +50,7 @@ func (s *Service) ParseImportRow(pd *dailyinput.ProjectData, row []string) (stri
 		Block: cell(13), Location: cell(14), Dumping: cell(15), Material: cell(16), SubMaterial: cell(17), Seam: cell(18), Phase: cell(19),
 		Distance: num(20, "distance"), Ritase: num(21, "ritase"), Production: num(22, "production"),
 		ProductionAdjusted: num(23, "production_adjusted"), DistanceVolume: num(24, "distance_volume"),
-		ProductivityFactor: num(25, "productivity_factor"),
+		ProductivityFactor: cell(25),
 	}
 	t := domain.Ritase{ProjectID: pd.Project.ID}
 	errs = dailyinput.RenameColumns(append(errs, applyRitase(pd, &t, in)...), ritaseColumns)

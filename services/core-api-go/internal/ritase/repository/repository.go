@@ -45,7 +45,7 @@ SELECT t.id, t.project_id, t.operational_date::text, t.shift_id, s.shift_code, s
        t.hauler_code, t.hauler_equipment_id, t.hauler_model, t.hauler_operator_nik, t.hauler_operator_name, t.hauler_partner,
        t.block, t.location, t.dumping, t.material, t.sub_material, t.seam, t.phase,
        t.distance::float8, t.ritase::float8, t.production::float8, t.production_adjusted::float8,
-       t.distance_volume::float8, t.productivity_factor::float8, t.updated_at
+       t.distance_volume::float8, t.productivity_factor, t.updated_at
   FROM core.ritases t
   JOIN core.shifts s ON s.id = t.shift_id`
 

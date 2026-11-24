@@ -40,6 +40,6 @@ type Ritase struct {
 	Production         *float64   `json:"production"`
 	ProductionAdjusted *float64   `json:"production_adjusted"`
 	DistanceVolume     *float64   `json:"distance_volume"`
-	ProductivityFactor *float64   `json:"productivity_factor"`
+	ProductivityFactor *string    `json:"productivity_factor"`
 	UpdatedAt          time.Time  `json:"updated_at"`
 }

@@ -137,7 +137,7 @@ func applyRainSlippery(pd *dailyinput.ProjectData, t *domain.RainSlipperyLog, in
 	var errs []dailyinput.RowIssue
 	sh, dateOK := pd.ApplyDateShift(&t.OperationalDate, in.OperationalDate, in.Shift, &errs)
 	t.ShiftID, t.ShiftCode, t.ShiftName = sh.ID, sh.Code, sh.Name
-	t.Location = dailyinput.Optional(in.Location, "location", 100, &errs)
+	t.Location = dailyinput.Optional(in.Location, "location", 2000, &errs)
 	t.RainfallMm = dailyinput.Amount(in.RainfallMm, "rainfall_mm", 2, &errs)
 
 	d := t.OperationalDate

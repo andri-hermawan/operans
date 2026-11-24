@@ -147,7 +147,7 @@ export interface Ritase {
   production: number | null
   production_adjusted: number | null
   distance_volume: number | null
-  productivity_factor: number | null
+  productivity_factor: string | null
 }
 
 /** WH & Notification: kejadian jam kerja unit (standby, dll). */

@@ -41,7 +41,7 @@ const ritaseConfig: CrudConfig<Ritase> = {
     col.number('production', 'Prod', 2),
     col.number('production_adjusted', 'Prod Adj', 2, { mobile: 'hide' }),
     col.number('distance_volume', 'Dist x Vol', 2, { mobile: 'hide' }),
-    col.number('productivity_factor', 'Productivity Factor', 4, { mobile: 'hide' }),
+    col.text('productivity_factor', 'Productivity Factor', { mobile: 'hide' }),
   ],
   summary: (rows) => (
     <Typography.Text>
@@ -76,7 +76,7 @@ const ritaseConfig: CrudConfig<Ritase> = {
       { name: 'production', label: 'Prod', type: 'number', min: 0 },
       { name: 'production_adjusted', label: 'Prod Adj', type: 'number', min: 0 },
       { name: 'distance_volume', label: 'Dist x Vol', type: 'number', min: 0 },
-      { name: 'productivity_factor', label: 'Productivity Factor', type: 'number', min: 0 },
+      { name: 'productivity_factor', label: 'Productivity Factor', type: 'textarea', span: 'full' },
     ],
     toForm: dailyToForm,
     initial: (_c, f) => ({ operational_date: f.date, shift: f.shift }),

@@ -1,5 +1,6 @@
 // Record / Upload → Transaction → Rain & Slippery.
 import { rainSlipperyApi } from '@/services/api/daily.api'
+import { getZones } from '@/services/api/zone.api'
 import type { CrudConfig } from '@/types/crud.types'
 import type { RainSlipperyLog } from '@/types/daily.types'
 import { hhmm } from '@/utils/time'
@@ -8,6 +9,17 @@ import { dailyCrud, dailyDefaults, dailyFilters, dailyToForm, dateShiftUnitField
 import { col } from '@/components/table/columns'
 
 const rainSlipperyCrud = dailyCrud(rainSlipperyApi)
+
+// Location = satu atau lebih segment (nama area peta) yang dipilih; disimpan sebagai teks dipisah koma.
+const SEP = ', '
+const segmentOptions = {
+  key: 'zone-segments',
+  load: async (pid: string) => {
+    const names = (await getZones(pid)).features.map((f) => f.properties.name?.trim()).filter(Boolean) as string[]
+    return [...new Set(names)].sort((a, b) => a.localeCompare(b, undefined, { numeric: true })).map((n) => ({ value: n, label: n }))
+  },
+}
+const joinLocation = (p: Record<string, unknown>) => ({ ...p, location: Array.isArray(p.location) ? (p.location as string[]).join(SEP) : p.location })
 const rainSlipperyConfig: CrudConfig<RainSlipperyLog> = {
   title: 'Rain & Slippery',
   resource: 'daily',
@@ -36,7 +48,7 @@ const rainSlipperyConfig: CrudConfig<RainSlipperyLog> = {
     width: 720,
     fields: [
       ...dateShiftUnitFields.slice(0, 2),
-      { name: 'location', label: 'Location', span: 'full' },
+      { name: 'location', label: 'Location (Segment)', type: 'multiSelect', options: segmentOptions, placeholder: 'Pilih satu atau lebih segment' },
       { name: 'rain_start', label: 'Start Rain', type: 'time' },
       { name: 'rain_stop', label: 'Stop Rain', type: 'time' },
       { name: 'rain_hours', label: 'Total Rain', type: 'number', unit: 'jam', min: 0, max: 24, help: 'Kosong = dihitung dari jam' },
@@ -50,6 +62,7 @@ const rainSlipperyConfig: CrudConfig<RainSlipperyLog> = {
     ],
     toForm: (r) => ({
       ...dailyToForm(r),
+      location: r.location ? r.location.split(SEP) : [],
       rain_start: hhmm(r.rain_start_at),
       rain_stop: hhmm(r.rain_stop_at),
       wait_slippery_start: hhmm(r.wait_slippery_start_at),
@@ -58,8 +71,8 @@ const rainSlipperyConfig: CrudConfig<RainSlipperyLog> = {
       slippery_stop: hhmm(r.slippery_stop_at),
     }),
     initial: (_c, f) => ({ operational_date: f.date, shift: f.shift }),
-    create: rainSlipperyCrud.create,
-    update: rainSlipperyCrud.update,
+    create: (p, ctx) => rainSlipperyCrud.create(joinLocation(p), ctx),
+    update: (row, p) => rainSlipperyCrud.update(row, joinLocation(p)),
   },
   remove: { action: rainSlipperyCrud.remove, label: (r) => `hujan & licin ${r.location ?? r.operational_date}` },
   importType: 'rain-slippery-logs',

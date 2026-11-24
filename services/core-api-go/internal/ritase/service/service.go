@@ -62,7 +62,7 @@ type RitaseInput struct {
 	Production         *float64   `json:"production"`
 	ProductionAdjusted *float64   `json:"production_adjusted"`
 	DistanceVolume     *float64   `json:"distance_volume"`
-	ProductivityFactor *float64   `json:"productivity_factor"`
+	ProductivityFactor *string    `json:"productivity_factor"`
 }
 
 func (s *Service) List(ctx context.Context, a access.Actor, f dailyinput.DailyFilter) ([]domain.Ritase, error) {
@@ -178,7 +178,7 @@ func applyRitase(pd *dailyinput.ProjectData, t *domain.Ritase, in RitaseInput) [
 	t.Production = dailyinput.Amount(in.Production, "production", 2, &errs)
 	t.ProductionAdjusted = dailyinput.Amount(in.ProductionAdjusted, "production_adjusted", 2, &errs)
 	t.DistanceVolume = dailyinput.Amount(in.DistanceVolume, "distance_volume", 2, &errs)
-	t.ProductivityFactor = dailyinput.Amount(in.ProductivityFactor, "productivity_factor", 4, &errs)
+	t.ProductivityFactor = dailyinput.Optional(in.ProductivityFactor, "productivity_factor", 5000, &errs)
 	return errs
 }
 
