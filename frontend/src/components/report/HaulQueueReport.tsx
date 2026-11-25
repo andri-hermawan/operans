@@ -5,13 +5,16 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Alert, Empty, Progress, Tag } from 'antd'
 
 import { useEquipmentList } from '@/hooks/useEquipments'
-import { useHaulQueueReport } from '@/hooks/useHaulQueueReport'
+import { useHaulQueueReport, type QueueCycle } from '@/hooks/useHaulQueueReport'
 import { useShifts } from '@/hooks/useShifts'
 import { brand } from '@/utils/colors'
+import type { ExcelSheet } from '@/types/excel.types'
 import { hasVessel } from '@/utils/equipmentType'
 import { downloadExcel } from '@/utils/excel'
 import { formatNumber, formatPlainDate, formatTime } from '@/utils/format'
 import { formatSeconds } from '@/utils/haulCycle'
+
+type ExportRow = { code: string; n: number; c: QueueCycle }
 
 interface Props {
   date?: string
@@ -77,9 +80,8 @@ export default function HaulQueueReport({ date, shiftCode, equipmentId, onLoadin
     if (!exportName) return
     setExporting(true)
     try {
-      const rows = groups.flatMap((g) => g.cycles.map((c, n) => ({ code: g.equipment.equipment_code, n: n + 1, c })))
-      await downloadExcel(exportName, [
-        {
+      const rows: ExportRow[] = groups.flatMap((g) => g.cycles.map((c, n) => ({ code: g.equipment.equipment_code, n: n + 1, c })))
+      const sheet: ExcelSheet<ExportRow> = {
           name: 'Durasi Antrian',
           rows,
           columns: [
@@ -93,8 +95,8 @@ export default function HaulQueueReport({ date, shiftCode, equipmentId, onLoadin
             { header: 'Durasi (menit)', numFmt: '0.0', value: (r) => Math.round((r.c.seconds / 60) * 10) / 10 },
             { header: 'Keterangan', value: (r) => (r.c.ongoing ? 'masih di zona' : '') },
           ],
-        },
-      ])
+      }
+      await downloadExcel(exportName, [sheet as ExcelSheet<unknown>])
     } finally {
       setExporting(false)
     }
