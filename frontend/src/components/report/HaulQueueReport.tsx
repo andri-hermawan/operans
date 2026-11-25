@@ -1,7 +1,7 @@
 // Isi laporan Durasi Antrian Hauling (dipakai halaman laporan dan halaman cetak). Data & aturan sama dengan Position History
 // (utils/haulCycle.ts): dari unit berhenti di Km 01+000 - 02+000 sampai keluar dari Stockpile Emplacement / TLS2 Zona 4.
 // Satu unit bisa punya 2–3 ritase dalam satu shift, jadi tabel dikelompokkan per unit (Asset ID) dengan ringkasan di kepala kelompoknya.
-import { useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Alert, Empty, Progress, Tag } from 'antd'
 
 import { useEquipmentList } from '@/hooks/useEquipments'
@@ -9,7 +9,8 @@ import { useHaulQueueReport } from '@/hooks/useHaulQueueReport'
 import { useShifts } from '@/hooks/useShifts'
 import { brand } from '@/utils/colors'
 import { hasVessel } from '@/utils/equipmentType'
-import { formatNumber, formatTime } from '@/utils/format'
+import { downloadExcel } from '@/utils/excel'
+import { formatNumber, formatPlainDate, formatTime } from '@/utils/format'
 import { formatSeconds } from '@/utils/haulCycle'
 
 interface Props {
@@ -19,6 +20,10 @@ interface Props {
   equipmentId?: string
   /** dipanggil saat status memuat berubah (halaman cetak menunggu sampai selesai) */
   onLoadingChange?: (loading: boolean) => void
+  /** nama berkas Excel (tanpa .xlsx); kosong di halaman cetak */
+  exportName?: string
+  /** tombol Export ada di header halaman: komponen ini melaporkan fungsi ekspor & statusnya ke halaman */
+  onExportState?: (s: { run: () => void; loading: boolean; disabled: boolean }) => void
 }
 
 const border = `1px solid ${brand.border}`
@@ -33,7 +38,8 @@ const Stat = ({ label, value, hint }: { label: string; value: string; hint?: str
   </div>
 )
 
-export default function HaulQueueReport({ date, shiftCode, equipmentId, onLoadingChange }: Props) {
+export default function HaulQueueReport({ date, shiftCode, equipmentId, onLoadingChange, exportName, onExportState }: Props) {
+  const [exporting, setExporting] = useState(false)
   const { data: equipment = [] } = useEquipmentList(false)
   const { data: shifts = [] } = useShifts()
 
@@ -47,8 +53,17 @@ export default function HaulQueueReport({ date, shiftCode, equipmentId, onLoadin
   )
   const { results, done, total, loading } = useHaulQueueReport(date, shiftCode, units)
 
-  const groups = useMemo(() => units.map((u) => results.get(u.id)).filter((r) => !!r && r.cycles.length > 0), [units, results])
-  const all = groups.flatMap((g) => g!.cycles)
+  // Urut dari "Mulai Antri" paling awal: ritase di dalam unit menurut waktu mulai, dan unit menurut ritase pertamanya
+  // (waktu penuh, jadi shift malam yang melewati tengah malam tetap berurutan benar).
+  const groups = useMemo(() => {
+    const t = (iso: string) => new Date(iso).getTime()
+    return units
+      .map((u) => results.get(u.id))
+      .filter((r) => !!r && r.cycles.length > 0)
+      .map((r) => ({ ...r!, cycles: [...r!.cycles].sort((x, y) => t(x.start) - t(y.start)) }))
+      .sort((x, y) => t(x.cycles[0].start) - t(y.cycles[0].start) || x.equipment.equipment_code.localeCompare(y.equipment.equipment_code, undefined, { numeric: true }))
+  }, [units, results])
+  const all = groups.flatMap((g) => g.cycles)
   const sum = all.reduce((s, c) => s + c.seconds, 0)
   const longest = all.reduce((m, c) => Math.max(m, c.seconds), 0)
   const failed = [...results.values()].filter((r) => r.error).length
@@ -56,6 +71,42 @@ export default function HaulQueueReport({ date, shiftCode, equipmentId, onLoadin
   const shiftName = (code: string | null) => (code ? (shifts.find((s) => s.shift_code === code)?.shift_name ?? code) : '-')
 
   useEffect(() => onLoadingChange?.(loading), [loading, onLoadingChange])
+
+  // Excel: satu baris per ritase (urutan sama dengan tabel); durasi dalam menit (angka) agar bisa dijumlah/dirata-ratakan
+  const doExport = async () => {
+    if (!exportName) return
+    setExporting(true)
+    try {
+      const rows = groups.flatMap((g) => g.cycles.map((c, n) => ({ code: g.equipment.equipment_code, n: n + 1, c })))
+      await downloadExcel(exportName, [
+        {
+          name: 'Durasi Antrian',
+          rows,
+          columns: [
+            { header: 'Tanggal Operasional', value: () => formatPlainDate(date) },
+            { header: 'Asset ID', value: (r) => r.code },
+            { header: 'Ritase', value: (r) => r.n },
+            { header: 'Shift', value: (r) => shiftName(r.c.shiftCode) },
+            { header: 'Mulai Antri', value: (r) => formatTime(r.c.start) },
+            { header: 'Keluar Zona', value: (r) => formatTime(r.c.end) },
+            { header: 'Durasi', value: (r) => formatSeconds(r.c.seconds) },
+            { header: 'Durasi (menit)', numFmt: '0.0', value: (r) => Math.round((r.c.seconds / 60) * 10) / 10 },
+            { header: 'Keterangan', value: (r) => (r.c.ongoing ? 'masih di zona' : '') },
+          ],
+        },
+      ])
+    } finally {
+      setExporting(false)
+    }
+  }
+
+  const runRef = useRef(doExport)
+  useEffect(() => {
+    runRef.current = doExport
+  })
+  const run = useCallback(() => void runRef.current(), [])
+  const empty = !groups.length
+  useEffect(() => onExportState?.({ run, loading: exporting, disabled: empty || !exportName }), [onExportState, run, exporting, empty, exportName])
 
   return (
     <>
@@ -93,13 +144,13 @@ export default function HaulQueueReport({ date, shiftCode, equipmentId, onLoadin
               </tr>
             </thead>
             {groups.map((g) => {
-              const cs = g!.cycles
+              const cs = g.cycles
               const total = cs.reduce((s, c) => s + c.seconds, 0)
               return (
-                <tbody key={g!.equipment.id}>
+                <tbody key={g.equipment.id}>
                   <tr>
                     <td colSpan={6} style={{ ...td, background: '#e5e7eb', fontWeight: 700 }}>
-                      <span style={{ marginRight: 16 }}>{g!.equipment.equipment_code}</span>
+                      <span style={{ marginRight: 16 }}>{g.equipment.equipment_code}</span>
                       <span style={{ fontWeight: 500, color: '#475569' }}>
                         {cs.length} ritase · total {formatSeconds(total)} · rata-rata {formatSeconds(total / cs.length)} · terlama {formatSeconds(Math.max(...cs.map((c) => c.seconds)))}
                       </span>
@@ -107,7 +158,7 @@ export default function HaulQueueReport({ date, shiftCode, equipmentId, onLoadin
                   </tr>
                   {cs.map((c, n) => (
                     <tr key={c.startIdx}>
-                      <td style={{ ...td, color: '#64748b' }}>{g!.equipment.equipment_code}</td>
+                      <td style={{ ...td, color: '#64748b' }}>{g.equipment.equipment_code}</td>
                       <td style={{ ...td, textAlign: 'center' }}>{n + 1}</td>
                       <td style={td}>{shiftName(c.shiftCode)}</td>
                       <td style={td}>{formatTime(c.start)}</td>
