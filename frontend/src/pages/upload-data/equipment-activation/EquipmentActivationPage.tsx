@@ -26,7 +26,7 @@ const activationConfig: CrudConfig<EquipmentActivation> = {
   form: {
     fields: [
       { name: 'activation_date', label: 'Tanggal', type: 'date', required: true },
-      { name: 'equipment_id', label: 'Equipment', type: 'select', options: 'equipmentIds', required: true, disabled: (_v, mode) => mode === 'edit' },
+      { name: 'equipment_code', label: 'Asset ID', type: 'combo', options: 'equipmentCodes', required: true, help: 'Pilih dari master atau ketik kode unit', disabled: (_v, mode) => mode === 'edit' },
       { name: 'status', label: 'Status', type: 'radio', required: true, initial: 'active', options: [{ value: 'active', label: 'Active' }, { value: 'inactive', label: 'Non Active' }] },
       { name: 'description', label: 'Description', type: 'textarea' },
     ],

@@ -15,6 +15,7 @@ const REPORT_LABEL: Record<string, string> = {
   alert_summary: 'Alert Summary',
   executive_hauling: 'Executive Summary Report Hauling',
   executive_emplacement: 'Executive Summary Report Emplacement',
+  ritase_by_customer: 'Ritase Hauling per Customer',
 }
 const ALL_DAY = '__day'
 

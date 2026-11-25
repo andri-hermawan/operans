@@ -23,6 +23,8 @@ export const router = createBrowserRouter([
   // halaman cetak tanpa menu (PDF jadwal laporan); login lewat sesi biasa atau token cetak
   { path: '/print/report-alert-summary', lazy: async () => ({ Component: (await import('@/pages/print/PrintReportAlertSummaryPage')).default }) },
   { path: '/print/report-executive-hauling', lazy: async () => ({ Component: (await import('@/pages/print/PrintReportExecutiveHaulingPage')).default }) },
+  { path: '/print/report-ritase-by-customer', lazy: async () => ({ Component: (await import('@/pages/print/PrintReportRitaseByCustomerPage')).default }) },
+  { path: '/print/report-haul-queue', lazy: async () => ({ Component: (await import('@/pages/print/PrintReportHaulQueuePage')).default }) },
   { path: '/print/report-executive-emplacement', lazy: async () => ({ Component: (await import('@/pages/print/PrintReportExecutiveEmplacementPage')).default }) },
   {
     path: '/',

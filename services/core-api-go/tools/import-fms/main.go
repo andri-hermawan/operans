@@ -741,7 +741,7 @@ func newImporter(src, dst, pool *pgxpool.Pool) *importer {
 		src: src, dst: dst,
 		daily: importexcelsvc.New(daily, map[string]importexcelsvc.RowImporter{
 			"operator-assignments":  operatorsvc.New(operatorrepo.New(pool), daily),
-			"equipment-activations": activationsvc.New(activationrepo.New(pool), equipment),
+			"equipment-activations": activationsvc.New(activationrepo.New(pool), daily),
 			"equipment-breakdowns":  breakdownsvc.New(breakdownrepo.New(pool), daily),
 			"weighbridge-tickets":   weighbridgesvc.New(weighbridgerepo.New(pool), daily),
 		}),

@@ -28,6 +28,34 @@ func (r *Repository) WeighbridgeDaily(ctx context.Context, f domain.ReportFilter
 		 GROUP BY 1, 2 ORDER BY 1, 2`, f)
 }
 
+// RitaseByCustomer: jumlah tiket per unit per customer pada satu tanggal operasional (shiftID nil = semua shift).
+// Daftar unit HANYA dari Equipment Activation tanggal itu (semua status); tiket timbangan di-join by equipment_code
+// (LEFT JOIN). Tiket unit yang tidak ada di aktivasi tidak dimunculkan. Unit tanpa tiket muncul dengan customer '' dan count 0.
+// Unit mitra (kode berawalan DT80) tidak ikut: laporan ini hanya untuk unit sendiri.
+func (r *Repository) RitaseByCustomer(ctx context.Context, projectID uuid.UUID, date string, shiftID *uuid.UUID) ([]domain.RitaseCustomerCell, error) {
+	rows, err := r.pool.Query(ctx, `
+		SELECT a.equipment_code, coalesce(nullif(upper(btrim(t.customer)), ''), CASE WHEN t.id IS NULL THEN '' ELSE '-' END), count(t.id)
+		  FROM core.equipment_activations a
+		  LEFT JOIN core.weighbridge_tickets t
+		         ON t.project_id = a.project_id AND t.operational_date = a.activation_date AND t.equipment_code = a.equipment_code
+		        AND ($3::uuid IS NULL OR t.shift_id = $3)
+		 WHERE a.project_id = $1 AND a.activation_date = $2::date AND a.equipment_code NOT LIKE 'DT80%'
+		 GROUP BY 1, 2 ORDER BY 1, 2`, projectID, date, shiftID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	out := []domain.RitaseCustomerCell{}
+	for rows.Next() {
+		var c domain.RitaseCustomerCell
+		if err := rows.Scan(&c.EquipmentCode, &c.Customer, &c.Count); err != nil {
+			return nil, err
+		}
+		out = append(out, c)
+	}
+	return out, rows.Err()
+}
+
 // ExecutiveHauling: per customer → net kg pada tanggal laporan, 1 bulan s.d. tanggal itu (MTD), dan 1 Januari s.d. tanggal itu (YTD).
 func (r *Repository) ExecutiveHauling(ctx context.Context, projectID uuid.UUID, date string) ([]domain.ExecutiveRow, error) {
 	rows, err := r.pool.Query(ctx, `

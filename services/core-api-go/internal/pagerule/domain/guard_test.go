@@ -16,6 +16,7 @@ func TestKeysFor(t *testing.T) {
 		"/api/v1/imports/work-hour-notifications": {"upload/wh-notification"},
 		"/api/v1/reports/executive-hauling":       {"report/report-executive-hauling"},
 		"/api/v1/reports/executive-emplacement":   {"report/report-executive-emplacement"},
+		"/api/v1/reports/ritase-by-customer":      {"report/report-ritase-by-customer"},
 		"/api/v1/shifts":                          nil, // tidak dijaga
 		"/api/v1/equipment":                       nil,
 		"/api/v1/access/mine":                     nil,

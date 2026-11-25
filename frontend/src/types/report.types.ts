@@ -19,6 +19,13 @@ export interface ExecutiveHaulingRow {
   ytd_kg: number
 }
 
+/** Ritase Hauling per Customer: jumlah tiket timbangan satu unit untuk satu customer. */
+export interface RitaseCustomerCell {
+  equipment_code: string
+  customer: string
+  count: number
+}
+
 /** Executive Summary Emplacement: per partner, produksi = Total TLS Out (ton) dan inventory = Sisa Cargo (ton) pada tanggal laporan. */
 export interface ExecutiveEmplacementRow {
   partner: string

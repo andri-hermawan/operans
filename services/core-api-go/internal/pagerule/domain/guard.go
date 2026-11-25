@@ -62,6 +62,7 @@ var uploadPages = map[string]string{
 var reportPages = map[string][]string{
 	"executive-hauling":     {"report/report-executive-hauling"},
 	"executive-emplacement": {"report/report-executive-emplacement"},
+	"ritase-by-customer":    {"report/report-ritase-by-customer"},
 	"weighbridge-daily": {
 		dashboardKey, "report/report-ritase-daily", "report/report-payload-daily", "report/report-production-daily", "report/equipment-shift-performance",
 	},

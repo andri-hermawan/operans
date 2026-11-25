@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/google/uuid"
 
@@ -25,10 +24,11 @@ func (s *Service) ImportColumns() (headers []string, example []any) {
 // ImportKey = keterangan kunci "data sama ditimpa" untuk pesan peringatan.
 func (s *Service) ImportKey() string { return "tanggal & unit" }
 
-// ParseImportRow — Aktivasi: Date | Equipment Code | Status | Description — unit WAJIB terdaftar di master (B4).
+// ParseImportRow — Aktivasi: Date | Equipment Code | Status | Description.
+// Unit boleh belum terdaftar di master equipment (seperti tiket timbangan): kodenya tetap disimpan.
 func (s *Service) ParseImportRow(pd *dailyinput.ProjectData, row []string) (string, any, []dailyinput.RowIssue) {
 	var errs []dailyinput.RowIssue
-	var a domain.ActivationRow
+	a := domain.ActivationRow{ProjectID: pd.Project.ID}
 
 	date, err := excel.ParseDate(excel.Cell(row, 0))
 	if err != nil {
@@ -36,13 +36,12 @@ func (s *Service) ParseImportRow(pd *dailyinput.ProjectData, row []string) (stri
 	}
 	a.Date = date
 
-	code := strings.ToUpper(excel.Cell(row, 1))
-	if code == "" {
+	if code := excel.Cell(row, 1); code == "" {
 		errs = append(errs, dailyinput.RowIssue{Column: "Equipment Code", Message: "Equipment Code wajib diisi"})
-	} else if id, ok := pd.Equipment[code]; ok {
-		a.EquipmentID = id
 	} else {
-		errs = append(errs, dailyinput.RowIssue{Column: "Equipment Code", Message: "unit " + code + " belum terdaftar di master equipment"})
+		var issues []dailyinput.RowIssue
+		pd.SetEquipment(&a.EquipmentCode, &a.EquipmentID, code, &issues, "Equipment Code")
+		errs = append(errs, issues...)
 	}
 
 	switch strings.ToLower(strings.Join(strings.Fields(excel.Cell(row, 2)), " ")) {
@@ -55,12 +54,11 @@ func (s *Service) ParseImportRow(pd *dailyinput.ProjectData, row []string) (stri
 	}
 
 	if d := excel.Cell(row, 3); d != "" {
-		if utf8.RuneCountInString(d) > 255 {
-			errs = append(errs, dailyinput.RowIssue{Column: "Description", Message: "Description maks. 255 karakter"})
-		}
-		a.Description = &d
+		var issues []dailyinput.RowIssue
+		a.Description = dailyinput.Optional(&d, "Description", 255, &issues)
+		errs = append(errs, issues...)
 	}
-	return a.Date + "|" + a.EquipmentID.String(), a, errs
+	return a.Date + "|" + a.EquipmentCode, a, errs
 }
 
 // SaveImportRows menyimpan semua baris dalam SATU transaksi (dryRun=true → dibatalkan, hanya menghitung).

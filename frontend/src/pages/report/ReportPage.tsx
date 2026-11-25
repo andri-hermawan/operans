@@ -14,6 +14,7 @@ import {
   PlayCircle,
   Scale,
   Search,
+  Hourglass,
   Truck,
   Wrench,
 } from 'lucide-react'
@@ -49,6 +50,7 @@ const GROUPS: { title: string; items: ReportMenuItem[] }[] = [
       { path: '/report/report-production-daily', title: 'Production', desc: 'Total produksi (ton)', icon: ic(Gauge) },
       { path: '/report/report-breakdown-daily', title: 'Breakdown', desc: 'Jam breakdown per unit', icon: ic(Wrench) },
       { path: '/report/report-pa-daily', title: 'Physical Availability', desc: 'PA % per unit per hari', icon: ic(CalendarCheck) },
+      { path: '/report/report-haul-queue', title: 'Durasi Antrian Hauling', desc: 'Lama antri tiap ritase per unit (dari Position History)', icon: ic(Hourglass) },
       { path: '/report/equipment-shift-performance', title: 'Equipment Shift Performance', desc: 'Kinerja tiap unit dalam satu shift', icon: ic(Gauge), roles: ['superadmin', 'admin'] },
     ],
   },
@@ -59,6 +61,7 @@ const GROUPS: { title: string; items: ReportMenuItem[] }[] = [
       { path: '/report/report-alert-summary', title: 'Alert Summary', desc: 'Ringkasan alert per jenis, segmen, jam', icon: ic(BarChart3) },
       { path: '/report/report-executive-hauling', title: 'Executive Summary Report Hauling', desc: 'Produksi per customer: Daily, MTD, YTD', icon: ic(ClipboardList) },
       { path: '/report/report-executive-emplacement', title: 'Executive Summary Report Emplacement', desc: 'Produksi (TLS Out) & inventory per partner', icon: ic(Boxes) },
+      { path: '/report/report-ritase-by-customer', title: 'Ritase Hauling per Customer', desc: 'Ritase timbangan per unit & customer: harian, per shift', icon: ic(Truck) },
     ],
   },
 ]

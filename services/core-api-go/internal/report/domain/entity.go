@@ -37,3 +37,10 @@ type ReportFilter struct {
 	ShiftID   *uuid.UUID
 	Codes     []string
 }
+
+// RitaseCustomerCell = jumlah tiket timbangan (ritase) satu unit untuk satu customer pada satu tanggal operasional (+ shift).
+type RitaseCustomerCell struct {
+	EquipmentCode string `json:"equipment_code"`
+	Customer      string `json:"customer"`
+	Count         int    `json:"count"`
+}

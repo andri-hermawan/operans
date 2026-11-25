@@ -12,7 +12,7 @@ export interface OperatorAssignment {
 
 export interface EquipmentActivation {
   id: number
-  equipment_id: string
+  equipment_id: string | null // kosong bila kode unit belum ada di master
   equipment_code: string
   activation_date: string
   status: 'active' | 'inactive'

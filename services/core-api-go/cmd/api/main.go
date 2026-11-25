@@ -181,7 +181,6 @@ func run() error {
 	userService := usersvc.New(userrepo.New(pool), authService, projectService)
 	shiftService := shiftsvc.New(shiftrepo.New(pool), projectService)
 	equipmentService := equipmentsvc.New(equipmentrepo.New(pool), projectService)
-	activationService := activationsvc.New(activationrepo.New(pool), equipmentService)
 	fuelCalibrationService := fuelcalibrationsvc.New(fuelcalibrationrepo.New(pool), equipmentService)
 	referenceService := referencesvc.New(referencerepo.New(pool))
 
@@ -192,6 +191,7 @@ func run() error {
 		Equipment:  equipmentService,
 		References: referenceService,
 	}
+	activationService := activationsvc.New(activationrepo.New(pool), daily)
 	operatorService := operatorsvc.New(operatorrepo.New(pool), daily)
 	breakdownService := breakdownsvc.New(breakdownrepo.New(pool), daily)
 	weighbridgeService := weighbridgesvc.New(weighbridgerepo.New(pool), daily)

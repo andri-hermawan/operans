@@ -12,6 +12,7 @@ import (
 var ReportTypes = map[string]ReportType{
 	"alert_summary":         {Label: "Alert Summary", PrintPath: "/print/report-alert-summary"},
 	"executive_hauling":     {Label: "Executive Summary Report Hauling", PrintPath: "/print/report-executive-hauling"},
+	"ritase_by_customer":    {Label: "Ritase Hauling per Customer", PrintPath: "/print/report-ritase-by-customer"},
 	"executive_emplacement": {Label: "Executive Summary Report Emplacement", PrintPath: "/print/report-executive-emplacement"},
 }
 

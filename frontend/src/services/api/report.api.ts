@@ -1,11 +1,15 @@
 // Rekap laporan harian dari core-api (weighbridge & breakdown per unit per tanggal operasional).
 import { core } from '@/services/http/client'
 import type { ListResponse } from '@/types/api.types'
-import type { DailyCell, DailyReportKind, ExecutiveEmplacementRow, ExecutiveHaulingRow, ReportPeriod } from '@/types/report.types'
+import type { DailyCell, DailyReportKind, ExecutiveEmplacementRow, ExecutiveHaulingRow, ReportPeriod, RitaseCustomerCell } from '@/types/report.types'
 
 /** Produksi (Total TLS Out) & inventory (Sisa Cargo) per partner pada `date`; produksi juga MTD dan YTD. */
 export const getExecutiveEmplacement = async (projectId: string, date: string) =>
   (await core.get<ListResponse<ExecutiveEmplacementRow>>('/api/v1/reports/executive-emplacement', { params: { project_id: projectId, date } })).data
+
+/** Ritase (tiket timbangan) per unit per customer pada `date`; shiftId kosong = semua shift. */
+export const getRitaseByCustomer = async (projectId: string, date: string, shiftId?: string) =>
+  (await core.get<ListResponse<RitaseCustomerCell>>('/api/v1/reports/ritase-by-customer', { params: { project_id: projectId, date, shift_id: shiftId } })).data
 
 /** Produksi per customer pada `date` (harian), bulan berjalan (MTD), dan tahun berjalan (YTD). */
 export const getExecutiveHauling = async (projectId: string, date: string) =>

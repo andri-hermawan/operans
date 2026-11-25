@@ -19,6 +19,7 @@ type Repository interface {
 	WeighbridgeDaily(ctx context.Context, f domain.ReportFilter) ([]domain.DailyCell, error)
 	BreakdownDaily(ctx context.Context, f domain.ReportFilter) ([]domain.DailyCell, error)
 	ExecutiveHauling(ctx context.Context, projectID uuid.UUID, date string) ([]domain.ExecutiveRow, error)
+	RitaseByCustomer(ctx context.Context, projectID uuid.UUID, date string, shiftID *uuid.UUID) ([]domain.RitaseCustomerCell, error)
 	ExecutiveEmplacement(ctx context.Context, projectID uuid.UUID, date string) ([]domain.ExecutiveEmplacementRow, error)
 }
 
@@ -64,6 +65,24 @@ func (s *Service) WeighbridgeDaily(ctx context.Context, a access.Actor, q Report
 		return nil, err
 	}
 	return s.repo.WeighbridgeDaily(ctx, f)
+}
+
+// RitaseByCustomer: ritase (tiket timbangan) per unit per customer pada satu tanggal operasional, semua shift atau satu shift.
+func (s *Service) RitaseByCustomer(ctx context.Context, a access.Actor, projectID *uuid.UUID, date string, shiftID *uuid.UUID) ([]domain.RitaseCustomerCell, error) {
+	pid := projectID
+	if pid == nil {
+		pid = a.ProjectID
+	}
+	if pid == nil {
+		return nil, apperror.Invalid("project_id wajib diisi")
+	}
+	if !a.CanView(*pid) {
+		return nil, apperror.ErrForbidden
+	}
+	if _, err := time.Parse("2006-01-02", date); !ymd.MatchString(date) || err != nil {
+		return nil, apperror.Invalid("date wajib YYYY-MM-DD")
+	}
+	return s.repo.RitaseByCustomer(ctx, *pid, date, shiftID)
 }
 
 // ExecutiveHauling: produksi per customer pada `date` (harian), bulan berjalan (MTD), dan tahun berjalan (YTD).

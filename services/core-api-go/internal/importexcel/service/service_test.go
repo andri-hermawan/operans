@@ -122,7 +122,7 @@ func newImport(st *dailyMem) *Service {
 	daily := dailyinput.Loader{Projects: st, Shifts: st, Equipment: st, References: st}
 	return New(daily, map[string]RowImporter{
 		"operator-assignments":  operatorsvc.New(opStore{m: st}, daily),
-		"equipment-activations": activationsvc.New(actStore{m: st}, nil),
+		"equipment-activations": activationsvc.New(actStore{m: st}, daily),
 		"equipment-breakdowns":  breakdownsvc.New(bdStore{m: st}, daily),
 		"weighbridge-tickets":   weighbridgesvc.New(wbStore{m: st}, daily),
 	})
@@ -226,17 +226,17 @@ func TestImportAktivasi(t *testing.T) {
 
 	res, err := s.Import(ctx, admin, "equipment-activations", nil, "a.xlsx", xlsx(t, header,
 		[]any{"22-10-2026", "DT10300", "Non Active", "servis"},
-		[]any{"22-10-2026", "DT77777", "Active", ""}, // tidak ada di master
+		[]any{"22-10-2026", "DT77777", "Active", ""}, // tidak ada di master: tetap sah (seperti tiket timbangan)
 		[]any{"23-10-2026", "DT10300", "Aktif", ""},  // status tidak dikenal
 	), true)
-	if err != nil || res.InvalidRows != 2 || len(res.Errors) != 2 {
+	if err != nil || res.InvalidRows != 1 || len(res.Errors) != 1 {
 		t.Fatalf("hasil: %+v err=%v", res, err)
 	}
 
 	res, err = s.Import(ctx, admin, "equipment-activations", nil, "a.xlsx", xlsx(t, header,
 		[]any{"22-10-2026", "dt10300", "non active", "servis"},
 	), false)
-	if err != nil || !res.Saved || st.savedActs[0].Status != activationdomain.ActivationInactive || st.savedActs[0].EquipmentID != dt1 {
+	if err != nil || !res.Saved || st.savedActs[0].Status != activationdomain.ActivationInactive || st.savedActs[0].EquipmentID == nil || *st.savedActs[0].EquipmentID != dt1 || st.savedActs[0].EquipmentCode != "DT10300" {
 		t.Fatalf("hasil: %+v err=%v saved=%+v", res, err, st.savedActs)
 	}
 }

@@ -21,6 +21,7 @@ func (h *Handler) Register(api *gin.RouterGroup) {
 	api.GET("/reports/weighbridge-daily", h.WeighbridgeDaily)
 	api.GET("/reports/breakdown-daily", h.BreakdownDaily)
 	api.GET("/reports/executive-hauling", h.ExecutiveHauling)
+	api.GET("/reports/ritase-by-customer", h.RitaseByCustomer)
 	api.GET("/reports/executive-emplacement", h.ExecutiveEmplacement)
 }
 
@@ -31,6 +32,23 @@ func (h *Handler) ExecutiveEmplacement(c *gin.Context) {
 		return
 	}
 	rows, err := h.svc.ExecutiveEmplacement(c.Request.Context(), response.ActorFrom(c), pid, c.Query("date"))
+	if response.WriteError(c, err) {
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": rows, "count": len(rows)})
+}
+
+// GET /api/v1/reports/ritase-by-customer?project_id&date&shift_id — per unit per customer: jumlah tiket timbangan (ritase) pada tanggal itu.
+func (h *Handler) RitaseByCustomer(c *gin.Context) {
+	pid, ok := response.QueryUUID(c, "project_id")
+	if !ok {
+		return
+	}
+	sid, ok := response.QueryUUID(c, "shift_id")
+	if !ok {
+		return
+	}
+	rows, err := h.svc.RitaseByCustomer(c.Request.Context(), response.ActorFrom(c), pid, c.Query("date"), sid)
 	if response.WriteError(c, err) {
 		return
 	}

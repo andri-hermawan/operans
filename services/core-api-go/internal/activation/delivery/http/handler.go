@@ -3,6 +3,7 @@ package http
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -23,18 +24,14 @@ func (h *Handler) Register(api *gin.RouterGroup) {
 	api.DELETE("/equipment-activations/:id", h.Delete)
 }
 
-// GET /api/v1/equipment-activations?project_id=&equipment_id=&date_from=&date_to=&status=
+// GET /api/v1/equipment-activations?project_id=&equipment_code=&date_from=&date_to=&status=
 func (h *Handler) List(c *gin.Context) {
 	pid, ok := response.QueryUUID(c, "project_id")
 	if !ok {
 		return
 	}
-	eid, ok := response.QueryUUID(c, "equipment_id")
-	if !ok {
-		return
-	}
 	list, err := h.svc.List(c.Request.Context(), response.ActorFrom(c), domain.ActivationFilter{
-		ProjectID: pid, EquipmentID: eid,
+		ProjectID: pid, EquipmentCode: strings.ToUpper(strings.TrimSpace(c.Query("equipment_code"))),
 		DateFrom: c.Query("date_from"), DateTo: c.Query("date_to"), Status: c.Query("status"),
 	})
 	if response.WriteError(c, err) {
