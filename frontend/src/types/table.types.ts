@@ -29,6 +29,8 @@ export interface DataTableProps<T> {
   loading?: boolean
   error?: unknown
   onRetry?: () => void
+  /** waktu data terakhir berhasil dimuat (ms); tampil di samping tombol Refresh supaya jelas bahwa data sudah diperbarui */
+  updatedAt?: number
   /** Pencarian teks di semua kolom (di browser). */
   searchable?: boolean
   /** Nama file Excel → tombol "Export Excel" muncul (ekspor SEMUA baris hasil filter, bukan satu halaman). */

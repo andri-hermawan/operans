@@ -51,6 +51,7 @@ const GROUPS: { title: string; items: ReportMenuItem[] }[] = [
       { path: '/report/report-breakdown-daily', title: 'Breakdown', desc: 'Jam breakdown per unit', icon: ic(Wrench) },
       { path: '/report/report-pa-daily', title: 'Physical Availability', desc: 'PA % per unit per hari', icon: ic(CalendarCheck) },
       { path: '/report/report-haul-queue', title: 'Durasi Antrian Hauling', desc: 'Lama antri tiap ritase per unit (dari Position History)', icon: ic(Hourglass) },
+      { path: '/report/report-ritase-distance', title: 'Ritase Based On Distance', desc: 'Ritase per unit: siklus penuh kembali ke segmen awal dengan status muatan sama', icon: ic(Hourglass) },
       { path: '/report/equipment-shift-performance', title: 'Equipment Shift Performance', desc: 'Kinerja tiap unit dalam satu shift', icon: ic(Gauge), roles: ['superadmin', 'admin'] },
     ],
   },

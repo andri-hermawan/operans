@@ -1,6 +1,6 @@
 // Halaman daftar + tambah/ubah/hapus + upload Excel + ekspor dari SATU konfigurasi.
 // Dipakai halaman master & upload (pengganti pola 3 file × 13 halaman di FMS lama).
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { App, Button, Dropdown, Form, Space, Tooltip, type MenuProps } from 'antd'
 import { ChevronDown, Pencil, Plus, Trash2, Upload as UploadIcon } from 'lucide-react'
@@ -8,6 +8,7 @@ import { ChevronDown, Pencil, Plus, Trash2, Upload as UploadIcon } from 'lucide-
 import { errorMessage } from '@/services/http/ApiError'
 import { useAuthStore } from '@/stores/auth.store'
 import type { CrudConfig, CrudCtx, Payload } from '@/types/crud.types'
+import type { FieldDef } from '@/types/form.types'
 import { useConfirm } from '@/hooks/useConfirm'
 import { useFilters } from '@/hooks/useFilters'
 import { useOperationalDefaults } from '@/hooks/useOperationalDefaults'
@@ -22,6 +23,33 @@ import PageHeader from '@/components/ui/PageHeader'
 
 import ImportModal from './ImportModal'
 
+/**
+ * Isi laci Tambah/Ubah. Setiap pembukaan memakai komponen BARU (key = id sesi) dengan instance Form sendiri.
+ * Dulu satu instance Form dipakai bersama semua sesi: saat Ubah baris lain dibuka, isian sesi sebelumnya
+ * (preserve={false}) dihapus SETELAH nilai awal sesi baru terpasang, sehingga form tampil kosong sampai halaman di-refresh.
+ */
+function RecordForm({ fields, mode, values, onFinish, submitRef }: {
+  fields: FieldDef[]
+  mode: 'create' | 'edit'
+  values: Payload
+  onFinish: (v: Payload) => void
+  submitRef: MutableRefObject<(() => void) | undefined>
+}) {
+  const [form] = Form.useForm()
+  useEffect(() => {
+    const ref = submitRef
+    ref.current = () => form.submit()
+    return () => {
+      ref.current = undefined
+    }
+  }, [form, submitRef])
+  return (
+    <Form form={form} initialValues={values} layout="vertical" onFinish={onFinish} requiredMark>
+      <FormFields fields={fields} mode={mode} />
+    </Form>
+  )
+}
+
 export default function CrudPage<T>({ config: c }: { config: CrudConfig<T> }) {
   const { message } = App.useApp()
   const qc = useQueryClient()
@@ -31,7 +59,7 @@ export default function CrudPage<T>({ config: c }: { config: CrudConfig<T> }) {
   const { data: shifts = [] } = useShifts()
   const now = useOperationalDefaults()
   const [filters, setFilters] = useFilters(c.defaultFilters ? c.defaultFilters(now) : {})
-  const [form] = Form.useForm()
+  const submitRef = useRef<(() => void) | undefined>(undefined)
   const [editing, setEditing] = useState<{ mode: 'create' | 'edit'; row?: T; values: Payload; id: number }>()
   const [importOpen, setImportOpen] = useState(false)
 
@@ -128,6 +156,7 @@ export default function CrudPage<T>({ config: c }: { config: CrudConfig<T> }) {
         loading={query.isFetching}
         error={query.error}
         onRetry={() => query.refetch()}
+        updatedAt={query.dataUpdatedAt}
         searchable={c.searchable ?? true}
         exportName={c.exportName}
         actions={actions}
@@ -145,13 +174,10 @@ export default function CrudPage<T>({ config: c }: { config: CrudConfig<T> }) {
           title={`${editing?.mode === 'edit' ? 'Edit' : 'Tambah'} ${c.title}`}
           width={c.form.width}
           onClose={() => setEditing(undefined)}
-          onSubmit={() => form.submit()}
+          onSubmit={() => submitRef.current?.()}
           saving={save.isPending}
         >
-          {/* preserve={false}: nilai dibuang saat laci ditutup, supaya Tambah tidak membawa isi Edit sebelumnya */}
-          <Form key={editing?.id} form={form} preserve={false} initialValues={editing?.values} layout="vertical" onFinish={(v) => save.mutate(v)} requiredMark>
-            {editing && <FormFields fields={c.form.fields} mode={editing.mode} />}
-          </Form>
+          {editing && <RecordForm key={editing.id} fields={c.form.fields} mode={editing.mode} values={editing.values} onFinish={(v) => save.mutate(v)} submitRef={submitRef} />}
         </FormDrawer>
       )}
 

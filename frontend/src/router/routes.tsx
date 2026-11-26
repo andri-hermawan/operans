@@ -139,6 +139,7 @@ const EXTRA: PageRoute[] = [
   hidden('/report/report-payload-daily', 'Payload Daily', 'report', page(() => import('@/pages/report/report-payload-daily/ReportPayloadDailyPage'))),
   hidden('/report/report-production-daily', 'Production Daily', 'report', page(() => import('@/pages/report/report-production-daily/ReportProductionDailyPage'))),
   hidden('/report/report-haul-queue', 'Durasi Antrian Hauling', 'report', page(() => import('@/pages/report/report-haul-queue/ReportHaulQueuePage'))),
+  hidden('/report/report-ritase-distance', 'Ritase Based On Distance', 'report', page(() => import('@/pages/report/report-ritase-distance/ReportRitaseDistancePage'))),
   hidden('/report/report-fuel-filling', 'Fuel Filling Report', 'report', page(() => import('@/pages/report/report-fuel-filling/ReportFuelFillingPage'))),
   hidden('/report/report-breakdown-history', 'Breakdown History', 'report', page(() => import('@/pages/report/report-breakdown-history/ReportBreakdownHistoryPage'))),
   hidden('/report/report-breakdown-daily', 'Breakdown Daily', 'report', page(() => import('@/pages/report/report-breakdown-daily/ReportBreakdownDailyPage'))),

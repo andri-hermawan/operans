@@ -5,6 +5,7 @@ import { Download, RefreshCw, Search } from 'lucide-react'
 import { errorMessage } from '@/services/http/ApiError'
 import type { DataTableProps } from '@/types/table.types'
 import { downloadExcel } from '@/utils/excel'
+import { dayjs } from '@/utils/time'
 import { text } from '@/utils/format'
 import styles from '@/components/components.module.css'
 
@@ -46,7 +47,8 @@ export default function DataTable<T>(p: DataTableProps<T>) {
         {p.toolbar}
       </Space>
       <Space wrap>
-        {p.onRetry && <Button icon={<RefreshCw size={14} />} onClick={p.onRetry} loading={p.loading}>Refresh</Button>}
+        {p.onRetry && p.updatedAt ? <span style={{ fontSize: 12, color: '#64748b' }}>Diperbarui {dayjs(p.updatedAt).format('HH:mm:ss')}</span> : null}
+        {p.onRetry && <Button icon={<RefreshCw size={14} />} onClick={() => p.onRetry?.()} loading={p.loading}>Refresh</Button>}
         {p.exportName && (
           <Button icon={<Download size={14} />} onClick={doExport} loading={exporting} disabled={!filtered.length}>Export Excel</Button>
         )}
